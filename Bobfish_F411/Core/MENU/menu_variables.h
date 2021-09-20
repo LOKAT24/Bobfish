@@ -15,7 +15,7 @@
 
 //#include "../WS2812B/ws2812b_fx.h"
 
-enum { _bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _Color_RGB, _Color_HSV, _string};
+enum { _bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _Color_RGB, _Color_HSV, _string, _select};
 
 typedef struct{
 	uint16_t h;
@@ -36,8 +36,6 @@ typedef struct{
 		ws2812b_color color_rgb;
 		ws2812b_color_hsv color_hsv;
 	};
-	//uint32_t max;
-	//uint32_t min;
 }menu_variable_t;
 
 //wchar_t* build_date_string;
@@ -50,6 +48,7 @@ extern menu_variable_t customEfekt_color1;
 extern menu_variable_t customEfekt_color2;
 extern menu_variable_t customEfekt_color3;
 extern menu_variable_t customEfekt_speed;
+extern menu_variable_t trybLed_var;
 extern menu_variable_t data_var;
 extern menu_variable_t build_date;
 extern menu_variable_t build_time;

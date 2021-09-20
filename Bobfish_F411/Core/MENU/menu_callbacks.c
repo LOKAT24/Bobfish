@@ -37,7 +37,7 @@ void value_change_refresh(void){
 	//wchar_t temp_string[20];
 	if(currentPointer->variable->type==_Color_HSV){
 		//swprintf(temp_string,sizeof(temp_string),L"H:%03d|S:%03d|V:%03d",currentPointer->variable->color_hsv.h,currentPointer->variable->color_hsv.s,currentPointer->variable->color_hsv.v);
-		uint8_t char_width=GFX_GetFontMaxWidth();
+		//uint8_t char_width=GFX_GetFontMaxWidth();
 
 
 		GFX_DrawFillRoundRectangle((127-60)+20*value_cursor, (lcd_row_pos+1)*GFX_GetFontHeight(), 20, GFX_GetFontHeight(), 2, INVERSE);
@@ -58,15 +58,15 @@ void value_save(void){
 	refresh_func=temp_refresh_func;
 
 	if(currentPointer->variable==&customEfekt_color1||currentPointer->variable==&customEfekt_color2||currentPointer->variable==&customEfekt_color3){
-		WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
-		WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
-		WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
-		WS2812BFX_SetMode(0, customEfekt_numer.byte);
-		WS2812BFX_Start(0);
+		//WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
+		//WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
+		//WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
+		//WS2812BFX_SetMode(0, customEfekt_numer.byte);
+		//WS2812BFX_Start(0);
 	}
 	if(currentPointer->variable==&customEfekt_numer){
 
-		WS2812BFX_Start(0);
+		//WS2812BFX_Start(0);
 	}
 	menu_refresh();
 }
@@ -74,16 +74,12 @@ void value_save(void){
 void value_decrease(void){
 	if(currentPointer->variable){
 		switch((currentPointer->variable)->type){		//_bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _Color_RGB, _Color_HSV, _string
-		case _bool:
-			if((currentPointer->variable)->byte)(currentPointer->variable)->byte=0;
-			else(currentPointer->variable)->byte=1;
-			break;
 		case _byte:
 			((currentPointer->variable)->byte)--;
 			if(currentPointer->variable==&customEfekt_numer){
 				//WS2812BFX_PrevMode(0);
 				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=57;
-				WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
+				//WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
 			}
 			break;
 		case _float:
@@ -94,10 +90,10 @@ void value_decrease(void){
 			break;
 		case _uint:
 			((currentPointer->variable)->uint32)--;
-			if(currentPointer->variable==&customEfekt_speed){
-				WS2812BFX_DecreaseSpeed(0, 1);
-				if((currentPointer->variable)->uint32>1000)(currentPointer->variable)->uint32=1000;
-			}
+			if((currentPointer->variable)->uint32<=10)((currentPointer->variable)->uint32)=10;
+			//WS2812BFX_Stop(0);
+			//WS2812BFX_SetSpeed(0,(currentPointer->variable)->uint32);
+			//WS2812BFX_Start(0);
 			break;
 		case _RTC_Time:
 			((currentPointer->variable)->tab[value_cursor])--;
@@ -131,8 +127,10 @@ void value_decrease(void){
 				((currentPointer->variable)->color_hsv.v)--;
 				break;
 			}
-			WS2812BFX_SetColorHSV(0, (currentPointer->variable)->color_hsv.h, (currentPointer->variable)->color_hsv.s, (currentPointer->variable)->color_hsv.v);
-			WS2812BFX_SetMode(0, FX_MODE_STATIC);
+			//WS2812BFX_Stop(0);
+			//WS2812BFX_SetColorHSV(0, (currentPointer->variable)->color_hsv.h, (currentPointer->variable)->color_hsv.s, (currentPointer->variable)->color_hsv.v);
+			//WS2812BFX_SetMode(0, FX_MODE_STATIC);
+			//WS2812BFX_Start(0);
 			break;
 		case _string:
 			//swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
@@ -143,32 +141,15 @@ void value_decrease(void){
 }
 
 void value_increase(void){
+
 	if(currentPointer->variable){
 		switch((currentPointer->variable)->type){		//_bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _Color_RGB, _Color_HSV, _string
-		case _bool:
-			if((currentPointer->variable)->byte)(currentPointer->variable)->byte=0;
-			else(currentPointer->variable)->byte=1;
-			break;
 		case _byte:
 
 			((currentPointer->variable)->byte)++;
 			if(currentPointer->variable==&customEfekt_numer){
-				//WS2812BFX_NextMode(0);
 				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=0;
-				WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
-//				switch (currentPointer->variable) {
-//					case customEfekt_color1:
-//						WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
-//						break;
-//					case customEfekt_color2:
-//						WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
-//						break;
-//					case customEfekt_color3:
-//						WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
-//						break;
-//					default:
-//						break;
-//				}
+				//WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
 			}
 			break;
 		case _float:
@@ -179,10 +160,10 @@ void value_increase(void){
 			break;
 		case _uint:
 			((currentPointer->variable)->uint32)++;
-			if(currentPointer->variable==&customEfekt_speed){
-				WS2812BFX_IncreaseSpeed(0, 1);
-				if((currentPointer->variable)->uint32>1000)(currentPointer->variable)->uint32=0;
-			}
+			if((currentPointer->variable)->uint32>65535)((currentPointer->variable)->uint32)=65535;
+			//WS2812BFX_Stop(0);
+			//WS2812BFX_SetSpeed(0,(currentPointer->variable)->uint32);
+			//WS2812BFX_Start(0);
 			break;
 		case _RTC_Time:
 			((currentPointer->variable)->tab[value_cursor])++;
@@ -216,9 +197,10 @@ void value_increase(void){
 				((currentPointer->variable)->color_hsv.v)++;
 				break;
 			}
-
-			WS2812BFX_SetColorHSV(0, (currentPointer->variable)->color_hsv.h, (currentPointer->variable)->color_hsv.s, (currentPointer->variable)->color_hsv.v);
-			WS2812BFX_SetMode(0, FX_MODE_STATIC);
+			//WS2812BFX_Stop(0);
+			//WS2812BFX_SetColorHSV(0, (currentPointer->variable)->color_hsv.h, (currentPointer->variable)->color_hsv.s, (currentPointer->variable)->color_hsv.v);
+			//WS2812BFX_SetMode(0, FX_MODE_STATIC);
+			//WS2812BFX_Start(0);
 			break;
 		case _string:
 			//swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
@@ -269,8 +251,21 @@ void value_change(void){
 	refresh_func=value_change_refresh;
 
 	value_cursor=0;
-
 	value_change_refresh();
+
+	if((currentPointer->parent)==&menu_1_1/*Tryb Ledów*/&&currentPointer->variable->type==_select){
+		currentPointer->variable->byte=menu_get_index(currentPointer);
+		value_save();
+	}
+	if(((currentPointer->variable)->type)==_bool){
+		if((currentPointer->variable)->byte){
+			(currentPointer->variable)->byte=0;
+		}else{
+			(currentPointer->variable)->byte=1;
+		}
+		value_save();
+	}
+
 }
 
 

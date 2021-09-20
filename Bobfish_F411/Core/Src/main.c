@@ -32,10 +32,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../WS2812B/ws2812b.h"
-#include "../WS2812B/ws2812b_fx.h"
+//#include "../WS2812B/ws2812b_fx.h"
 #include "../MENU/menu.h"
 #include "../BITMAPS/bitmaps.h"
-//#include "keyb.h"
+#include "keyb.h"
 
 //adc 29761,9Hz | timer
 
@@ -71,7 +71,7 @@ void SystemClock_Config(void);
 
 void HAL_SYSTICK_Callback(void)
 {
-	WS2812BFX_SysTickCallback();	// FX effects software timers
+	//WS2812BFX_SysTickCallback();	// FX effects software timers
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -183,7 +183,7 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim3);
   HAL_TIM_Base_Start(&htim2);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_read[0].word, SAMPLE_NUM);
+  //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_read[0].word, SAMPLE_NUM);
 
   HAL_RTC_GetTime(&hrtc, &RtcTime, RTC_FORMAT_BIN);
   HAL_RTC_GetDate(&hrtc, &RtcDate, RTC_FORMAT_BIN);
@@ -191,15 +191,15 @@ int main(void)
   //HAL_UART_Transmit_DMA(&huart1, ADC_read.byte , 1);
   //uint8_t aa=0xAA;
   WS2812B_Init(&hspi1);
-  WS2812BFX_Init(1);
-  WS2812BFX_SetSegmentSize(0, 0, 7);
-  WS2812BFX_SetSpeed(0,customEfekt_speed.uint32);
-  WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
-  WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
-  WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
-  WS2812BFX_SetMode(0, customEfekt_numer.byte);
+  //WS2812BFX_Init(1);
+  //WS2812BFX_SetSegmentSize(0, 0, 7);
+  //WS2812BFX_SetSpeed(0,customEfekt_speed.uint32);
+  //WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
+  //WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
+  //WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
+  //WS2812BFX_SetMode(0, customEfekt_numer.byte);
 
-  WS2812BFX_Start(0);
+  //WS2812BFX_Start(0);
   menu_refresh();
 
 
@@ -213,7 +213,7 @@ int main(void)
   while (1)
   {
 
-	WS2812BFX_Callback();
+	//WS2812BFX_Callback();
 
 	//HAL_UART_Transmit(&huart1, &aa, 1, 100);
 	//HAL_UART_Transmit_DMA(&huart1, ADC_read.byte , 2);

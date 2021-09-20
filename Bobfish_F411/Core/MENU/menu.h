@@ -57,11 +57,11 @@ struct menu_struct{
 
 menu_t menu_0;//ekran startowy
 	menu_t menu_1;//menu głowne
-		menu_t menu_1_1;//efekty
-			menu_t menu_1_1_1;//RGB
-			menu_t menu_1_1_2;//HSV
-			menu_t menu_1_1_3;//RAINBOW
-			menu_t menu_1_1_4;//OFF
+		menu_t menu_1_1;//Tryb ledów
+			menu_t menu_1_1_1;//Kolor 1
+			menu_t menu_1_1_2;//Kolor 2
+			menu_t menu_1_1_3;//Efekt
+			menu_t menu_1_1_4;//Praca dzień/noc
 		menu_t menu_1_2;//OPCJE
 			menu_t menu_1_2_1;//Godzina
 			menu_t menu_1_2_2;//DATA
@@ -75,6 +75,7 @@ menu_t menu_0;//ekran startowy
 				menu_t menu_1_2_4_1;//Build Time
 				menu_t menu_1_2_4_2;//Build Date
 			menu_t menu_1_2_5; //Save(time/date)
+			menu_t menu_1_2_6; //Buzzer
 		menu_t menu_1_3;//Oscyloskop
 		menu_t menu_1_4; //Snake
 	menu_t menu_2;//menu boczne
@@ -99,7 +100,8 @@ void menu_next(void);
 void menu_prev(void);
 void menu_enter(void);
 void menu_back(void);
-void core_loop(void);
+//void core_loop(void);
+uint8_t menu_get_index(menu_t *q);
 
 
 void (*key_down_func)(void);// = &menu_next;

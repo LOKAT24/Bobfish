@@ -11,13 +11,13 @@
 
 menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran startowy
 	menu_t menu_1 = { L"* MENU *", NULL, NULL, &menu_1_1, NULL, NULL, NULL}; //menu głowne
-		menu_t menu_1_1 = { L"Efekty", &menu_1_2, &menu_1_3, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
-			menu_t menu_1_1_1 = { L"RGB", &menu_1_1_2, &menu_1_1_4, NULL, &menu_1_1, value_change, &buzzer_state}; //RGB
-			menu_t menu_1_1_2 = { L"HSV", &menu_1_1_3, &menu_1_1_1, NULL, &menu_1_1, NULL, NULL}; //HSV
-			menu_t menu_1_1_3 = { L"RAINBOW", &menu_1_1_4, &menu_1_1_2, NULL, &menu_1_1, NULL, NULL}; //RAINBOW
-			menu_t menu_1_1_4 = { L"OFF", NULL, &menu_1_1_3, NULL, &menu_1_1, NULL, NULL}; //OFF
+		menu_t menu_1_1 = { L"Tryb LED'ów", &menu_1_2, &menu_1_4, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
+			menu_t menu_1_1_1 = { L"Stały kolor 1", &menu_1_1_2, &menu_1_1_4, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 1
+			menu_t menu_1_1_2 = { L"Stały kolor 2", &menu_1_1_3, &menu_1_1_1, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 2
+			menu_t menu_1_1_3 = { L"Efekt", &menu_1_1_4, &menu_1_1_2, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały efekt
+			menu_t menu_1_1_4 = { L"Dzień/noc", NULL, &menu_1_1_3, NULL, &menu_1_1, value_change, &trybLed_var}; //Dzień/noc
 		menu_t menu_1_2 = { L"Opcje", &menu_1_3, &menu_1_1, &menu_1_2_1, &menu_1, NULL, NULL}; //OPCJE
-			menu_t menu_1_2_1 =	{ L"Godzina", &menu_1_2_2, &menu_1_2_5, NULL, &menu_1_2, value_change, &godzina_var}; //Godzina
+			menu_t menu_1_2_1 =	{ L"Godzina", &menu_1_2_2, &menu_1_2_6, NULL, &menu_1_2, value_change, &godzina_var}; //Godzina
 			menu_t menu_1_2_2 = { L"Data", &menu_1_2_3, &menu_1_2_1, NULL, &menu_1_2, value_change, &data_var}; //DATA
 			menu_t menu_1_2_3 = { L"Kreator efektu", &menu_1_2_4, &menu_1_2_2, &menu_1_2_3_1, &menu_1_2, NULL, NULL}; //Kreator efektu
 				menu_t menu_1_2_3_1 = { L"Numer efektu", &menu_1_2_3_2, &menu_1_2_3_5, NULL, &menu_1_2_3, value_change, &customEfekt_numer}; //Numer efektu
@@ -26,9 +26,10 @@ menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran star
 				menu_t menu_1_2_3_4 = { L"Kolor 3", &menu_1_2_3_5, &menu_1_2_3_3, NULL, &menu_1_2_3, value_change, &customEfekt_color3}; //Kolor 3
 				menu_t menu_1_2_3_5 = { L"Szybkość", NULL, &menu_1_2_3_4, NULL, &menu_1_2_3, value_change, &customEfekt_speed}; //Szybkość
 			menu_t menu_1_2_4 = { L"Build", &menu_1_2_5, &menu_1_2_3, &menu_1_2_4_1, &menu_1_2, NULL, NULL}; //Build
-				menu_t menu_1_2_4_1 = { L"Godzina:", &menu_1_2_4_2, &menu_1_2_4_2, NULL, &menu_1_2_4, NULL, &build_time}; //Build time
-				menu_t menu_1_2_4_2 = { L"Data:", NULL, &menu_1_2_4_1, NULL, &menu_1_2_4, NULL, &build_date}; //Build date
-			menu_t menu_1_2_5 = { L"Save(date/time)", NULL, &menu_1_2_4, NULL, &menu_1_2, value_change, &change_time_flag}; //Save(time/date)
+				menu_t menu_1_2_4_1 = { L"G:", &menu_1_2_4_2, &menu_1_2_4_2, NULL, &menu_1_2_4, NULL, &build_time}; //Build time
+				menu_t menu_1_2_4_2 = { L"D:", NULL, &menu_1_2_4_1, NULL, &menu_1_2_4, NULL, &build_date}; //Build date
+			menu_t menu_1_2_5 = { L"Save(date/time)", &menu_1_2_6, &menu_1_2_4, NULL, &menu_1_2, value_change, &change_time_flag}; //Save(time/date)
+			menu_t menu_1_2_6 = { L"Buzzer", NULL, &menu_1_2_5, NULL, &menu_1_2, value_change, &buzzer_state}; //Save(time/date)
 		menu_t menu_1_3 = { L"~Oscyloskop~", &menu_1_4, &menu_1_2, NULL, &menu_1, showADC, NULL}; //Oscyloskop
 		menu_t menu_1_4 = { L"Play \"SNAKE II\"", NULL, &menu_1_3, NULL, &menu_1, snake_play, NULL}; //Snake
 	menu_t menu_2 = { L"Boczne menu", NULL, NULL, NULL, &menu_0, NULL, NULL}; //menu boczne
@@ -86,10 +87,10 @@ void menu_refresh(void) {
 					swprintf(value,sizeof(value),L"%u",(temp->variable)->uint32);
 					break;
 				case _RTC_Time:
-					swprintf(value,sizeof(value),L"G-%02d:%02d",(temp->variable)->tab[0],(temp->variable)->tab[1]);
+					swprintf(value,sizeof(value),L": %02d:%02d",(temp->variable)->tab[0],(temp->variable)->tab[1]);
 					break;
 				case _RTC_Date:
-					swprintf(value,sizeof(value),L"D-%02d/%02d/20%02d",(temp->variable)->tab[0],(temp->variable)->tab[1],(temp->variable)->tab[2]);
+					swprintf(value,sizeof(value),L": %02d/%02d/%02d",(temp->variable)->tab[0],(temp->variable)->tab[1],(temp->variable)->tab[2]);
 					break;
 				case _Color_RGB:
 					swprintf(value,sizeof(value),L"R:%03d|G:%03d|B:%03d", ((temp->variable)->color_rgb).red, ((temp->variable)->color_rgb).green, ((temp->variable)->color_rgb).blue);
@@ -99,6 +100,13 @@ void menu_refresh(void) {
 					break;
 				case _string:
 					swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
+					break;
+				case _select:
+					if(temp->variable->byte==menu_get_index(temp)){
+						swprintf(value,sizeof(value),L"X");
+					}else{
+						swprintf(value,sizeof(value),L" ");
+					}
 					break;
 				}
 				uint8_t x_pos=127-GFX_GetStringWidth(value)*GFX_GetFontSize();
@@ -240,7 +248,7 @@ void menu_init(I2C_HandleTypeDef *i2c) {
 	menu_variables_init();
 	SSD1306_I2cInit(i2c);
 	HAL_Delay(1000);
-	GFX_SetFont(&Font_small);
+	GFX_SetFont(&Font_Times_New_Roman);
 	GFX_SetFontSize(1);
 	menu_rows=SSD1306_LCDHEIGHT/GFX_GetFontHeight();
 	key_down_func = &menu_next;
@@ -274,7 +282,7 @@ void key_press(int key){
 	}
 }
 
-
+/*
 void core_loop(void) {
 	static int liczba = 0;
 	static int num=0;
@@ -294,7 +302,7 @@ void core_loop(void) {
 			//&Font_Harry_Potter_h48,
 			//&Font_LED,
 			//&Font_Tahoma,
-			//&Font_Times_New_Roman,
+			&Font_Times_New_Roman,
 			//&Font_kuchen,
 			&Font_small
 	};
@@ -360,5 +368,5 @@ void core_loop(void) {
 		GFX_DrawString(128-GFX_GetStringWidth(godz_str),63-GFX_GetFontHeight(), godz_str, WHITE, BLACK);
 		GFX_SetFont(oldFont);
 		GFX_SetFontSize(oldSize);
-}
+}*/
 
