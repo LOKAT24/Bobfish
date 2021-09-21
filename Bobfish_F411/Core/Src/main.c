@@ -17,7 +17,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
@@ -71,6 +70,7 @@ void SystemClock_Config(void);
 
 void HAL_SYSTICK_Callback(void)
 {
+	//HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 	//WS2812BFX_SysTickCallback();	// FX effects software timers
 }
 
@@ -78,7 +78,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	//wywo³ywanie funkcji sprawdzaj¹cej klawisze co 10ms
 	if (htim->Instance == TIM3) {
 		KeybProc();
-		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+		//HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 	}
 }
 
@@ -150,7 +150,6 @@ int main(void)
 
   /* USER CODE END 1 */
 
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -187,10 +186,13 @@ int main(void)
 
   HAL_RTC_GetTime(&hrtc, &RtcTime, RTC_FORMAT_BIN);
   HAL_RTC_GetDate(&hrtc, &RtcDate, RTC_FORMAT_BIN);
+  //HAL_GPIO_Init(LED_GPIO_Port, LED_Pin);
 
   //HAL_UART_Transmit_DMA(&huart1, ADC_read.byte , 1);
   //uint8_t aa=0xAA;
   WS2812B_Init(&hspi1);
+  WS2812B_SetDiodeRGB(0, 128, 128, 128);
+  WS2812B_Refresh();
   //WS2812BFX_Init(1);
   //WS2812BFX_SetSegmentSize(0, 0, 7);
   //WS2812BFX_SetSpeed(0,customEfekt_speed.uint32);
@@ -206,12 +208,11 @@ int main(void)
 
   /* USER CODE END 2 */
 
-
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  WS2812B_Refresh();
 
 	//WS2812BFX_Callback();
 
@@ -271,13 +272,13 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -292,7 +293,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks
+  /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -302,12 +303,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }

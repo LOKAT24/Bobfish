@@ -14,7 +14,7 @@
 // For 6 MHz SPI + DMA
 #include "main.h"
 
-#define WS2812B_LEDS 8
+#define WS2812B_LEDS 1
 
 typedef struct ws2812b_color {
 	uint8_t red, green, blue;
