@@ -24,6 +24,7 @@ menu_variable_t customEfekt_speed={ .type=_uint, .uint32=50};
 menu_variable_t change_time_flag={ .type=_bool, .byte=0};
 menu_variable_t trybLed_var={ .type=_select, .byte=0};
 
+
 menu_variable_t build_date={ .type=_string, .string=build_date_wstring};
 menu_variable_t build_time={ .type=_string, .string=build_time_wstring};
 

@@ -22,7 +22,9 @@ typedef struct{
 	uint8_t s;
 	uint8_t v;
 }ws2812b_color_hsv;
-
+typedef struct ws2812b_color {
+	uint8_t red, green, blue;
+} ws2812b_color;
 
 typedef struct{
 	uint8_t type;

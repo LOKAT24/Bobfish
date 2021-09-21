@@ -76,8 +76,9 @@ menu_t menu_0;//ekran startowy
 				menu_t menu_1_2_4_2;//Build Date
 			menu_t menu_1_2_5; //Save(time/date)
 			menu_t menu_1_2_6; //Buzzer
-		menu_t menu_1_3;//Oscyloskop
-		menu_t menu_1_4; //Snake
+			menu_t menu_1_2_7; //Menu serwis
+		menu_t menu_1_X1;//Oscyloskop
+		menu_t menu_1_3; //Snake
 	menu_t menu_2;//menu boczne
 
 

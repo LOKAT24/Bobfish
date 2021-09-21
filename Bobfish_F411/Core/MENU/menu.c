@@ -11,13 +11,13 @@
 
 menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran startowy
 	menu_t menu_1 = { L"* MENU *", NULL, NULL, &menu_1_1, NULL, NULL, NULL}; //menu głowne
-		menu_t menu_1_1 = { L"Tryb LED'ów", &menu_1_2, &menu_1_4, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
+		menu_t menu_1_1 = { L"Tryb LED'ów", &menu_1_2, &menu_1_3, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
 			menu_t menu_1_1_1 = { L"Stały kolor 1", &menu_1_1_2, &menu_1_1_4, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 1
 			menu_t menu_1_1_2 = { L"Stały kolor 2", &menu_1_1_3, &menu_1_1_1, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 2
 			menu_t menu_1_1_3 = { L"Efekt", &menu_1_1_4, &menu_1_1_2, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały efekt
 			menu_t menu_1_1_4 = { L"Dzień/noc", NULL, &menu_1_1_3, NULL, &menu_1_1, value_change, &trybLed_var}; //Dzień/noc
 		menu_t menu_1_2 = { L"Opcje", &menu_1_3, &menu_1_1, &menu_1_2_1, &menu_1, NULL, NULL}; //OPCJE
-			menu_t menu_1_2_1 =	{ L"Godzina", &menu_1_2_2, &menu_1_2_6, NULL, &menu_1_2, value_change, &godzina_var}; //Godzina
+			menu_t menu_1_2_1 =	{ L"Godzina", &menu_1_2_2, &menu_1_2_7, NULL, &menu_1_2, value_change, &godzina_var}; //Godzina
 			menu_t menu_1_2_2 = { L"Data", &menu_1_2_3, &menu_1_2_1, NULL, &menu_1_2, value_change, &data_var}; //DATA
 			menu_t menu_1_2_3 = { L"Kreator efektu", &menu_1_2_4, &menu_1_2_2, &menu_1_2_3_1, &menu_1_2, NULL, NULL}; //Kreator efektu
 				menu_t menu_1_2_3_1 = { L"Numer efektu", &menu_1_2_3_2, &menu_1_2_3_5, NULL, &menu_1_2_3, value_change, &customEfekt_numer}; //Numer efektu
@@ -29,9 +29,10 @@ menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran star
 				menu_t menu_1_2_4_1 = { L"G:", &menu_1_2_4_2, &menu_1_2_4_2, NULL, &menu_1_2_4, NULL, &build_time}; //Build time
 				menu_t menu_1_2_4_2 = { L"D:", NULL, &menu_1_2_4_1, NULL, &menu_1_2_4, NULL, &build_date}; //Build date
 			menu_t menu_1_2_5 = { L"Save(date/time)", &menu_1_2_6, &menu_1_2_4, NULL, &menu_1_2, value_change, &change_time_flag}; //Save(time/date)
-			menu_t menu_1_2_6 = { L"Buzzer", NULL, &menu_1_2_5, NULL, &menu_1_2, value_change, &buzzer_state}; //Save(time/date)
-		menu_t menu_1_3 = { L"~Oscyloskop~", &menu_1_4, &menu_1_2, NULL, &menu_1, showADC, NULL}; //Oscyloskop
-		menu_t menu_1_4 = { L"Play \"SNAKE II\"", NULL, &menu_1_3, NULL, &menu_1, snake_play, NULL}; //Snake
+			menu_t menu_1_2_6 = { L"Buzzer", &menu_1_2_7, &menu_1_2_5, NULL, &menu_1_2, value_change, &buzzer_state};
+			menu_t menu_1_2_7 = { L"Menu serwis", NULL, &menu_1_2_6, NULL, &menu_1_2, code_menu, NULL}; //Save(time/date)
+		menu_t menu_1_X1 = { L"~Oscyloskop~", NULL, NULL, NULL, &menu_1, NULL, NULL}; //Oscyloskop
+		menu_t menu_1_3 = { L"Play \"SNAKE II\"", NULL, &menu_1_2, NULL, &menu_1, snake_play, NULL}; //Snake
 	menu_t menu_2 = { L"Boczne menu", NULL, NULL, NULL, &menu_0, NULL, NULL}; //menu boczne
 
 
@@ -56,9 +57,9 @@ void menu_refresh(void) {
 		GFX_DrawString(x_to_center, 0, (temp->parent)->name, WHITE, WHITE);
 		GFX_DrawLine(0, GFX_GetFontHeight()*GFX_GetFontSize(), 127,  GFX_GetFontHeight()*GFX_GetFontSize(), WHITE);
 
-	for (int i = 0; i < menu_index-(menu_rows-2); i++) {
-		temp = temp->next;
-	}
+		for (int i = 0; i < menu_index-(menu_rows-2); i++) {
+			temp = temp->next;
+		}
 
 		for (int i = 1; i < menu_rows; i++)
 		{

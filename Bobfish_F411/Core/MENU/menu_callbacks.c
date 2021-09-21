@@ -8,7 +8,6 @@
 #include "main.h"
 //#include <arm_math.h>
 
-#include "adc.h"
 #include "menu.h"
 #include "../WS2812B/ws2812b_fx.h"
 #include "../WS2812B/ws2812b.h"
@@ -268,134 +267,64 @@ void value_change(void){
 
 }
 
+/*Menu kodu serwisowego--------------------------------------------------------------------------*/
+union Code_t{
+	uint32_t uint;
+	uint8_t tab[4];
+};
+union Code_t CODE={0x01020304};
+union Code_t SECRET_CODE={0x06090609};
 
-/*****************************************************************************************************************************************
-														WYŚWIETLANIE PRZEBIEGU ADC
-*****************************************************************************************************************************************/
+uint8_t code_cursor=3;
 
-void showADC_back(void){
+void code_increase(void){
+	if(CODE.tab[code_cursor]<9)CODE.tab[code_cursor]++;
+	else CODE.tab[code_cursor]=0;
+}
+void code_decrease(void){
+	if(CODE.tab[code_cursor]>0)CODE.tab[code_cursor]--;
+	else CODE.tab[code_cursor]=9;
+}
+void enter_secret_menu(void){
 	key_down_func=temp_key_down_func;
 	key_up_func=temp_key_up_func;
 	key_enter_func=temp_key_enter_func;
 	key_left_func=temp_key_left_func;
 	key_right_func=temp_key_right_func;
 	refresh_func=temp_refresh_func;
+	if(CODE.uint==SECRET_CODE.uint){
+		currentPointer=&menu_1_1_3;
+	}
+
 }
-uint8_t adaptiveHeight=1;
-uint8_t dot_style=1;
-uint16_t triger=1500;
-uint32_t max=0;
-uint32_t min=4095;
-void showADC_refresh(void){
+void code_cursor_right(void){
+	if(code_cursor>0)code_cursor--;
+	else code_cursor=3;
+}
+void code_cursor_left(void){
+	if(code_cursor<3)code_cursor++;
+	else code_cursor=0;
+}
+void code_menu_refresh(void){
 	SSD1306_Clear(BLACK);
-	uint16_t tempADC_read[SAMPLE_NUM];
-	uint32_t adc=0;
-	uint16_t triger_index=63;
-	max=0;
-	min=4095;
-	static uint32_t maxall=0;
-	static uint32_t minall=4095;
-	///KOPIOWANIE PRÓBKI///
-	for(uint16_t i=0;i<SAMPLE_NUM;i++){
-		tempADC_read[i]=ADC_read[i].word;
-		adc+=tempADC_read[i];
-	}
-	adc=adc/SAMPLE_NUM;
-	//////////////////////////////////////////////////  FFT  //////////////////////////////////////////////////////
-//	// Wystarczą deklaracje dwóch struktur
-//	arm_rfft_instance_f32 S;
-//	arm_cfft_radix4_instance_f32 S_CFFT;
-//
-//	// oraz inicjalizacja, gdzie:
-//	//  arg#3 – liczba próbek w buforze wejściowym; możliwe wartości to: 128, 512, 2048
-//	//  arg#4 – kierunek transformacji: 0 – prosta, 1 – odwrotna
-//	//  arg#5 – uporządkowanie wartości w buforze wyjściowym: 0 – odwrócone, 1 - normalne
-//	arm_rfft_init_f32(&S, &S_CFFT, 512, 0, 1);
-//
-//	// Wyznaczenie transformaty Fouriera
-//	arm_rfft_f32(&S, tempADC_read, buffer_output);
-//	// Obliczenie modułów
-//	arm_cmplx_mag_f32(buffer_output, buffer_output_mag, 512);
-//	// Znalezienie składowej harmonicznej sygnału o największej amplitudzie
-//	arm_max_f32(buffer_output_mag, 512, &maxvalue, &maxvalueindex);
-//	// Skalowanie wartości modułów
-//	for(i=0; i<512; ++i){
-//		buffer_output_mag[i] = 100*buffer_output_mag[i]/maxvalue;
-//	}
-//
-
-//	arm_rfft_instance_q15 S;
-//	q15_t buffer_output[1024];
-//	q15_t buffer_output_mag[512];
-//
-//	arm_cfft_radix4_instance_q15 S_CFFT;
-//
-//	arm_rfft_init_q15(&S, 512, 0, 1);
-//	arm_rfft_q15(&S, (q15_t*)tempADC_read, buffer_output);
-//	arm_cmplx_mag_q15(buffer_output, buffer_output_mag, 512);
-
-	///SKALOWANIE WYKRESU (w Y)///
-	if(adaptiveHeight){
-		for (int i = 0; i < SAMPLE_NUM; ++i) {
-			maxall=(tempADC_read[i]>maxall)?tempADC_read[i]:maxall;
-			minall=(tempADC_read[i]<minall)?tempADC_read[i]:minall;
-			max=(tempADC_read[i]>max)?tempADC_read[i]:max;
-			min=(tempADC_read[i]<min)?tempADC_read[i]:min;
-		}
-	}else{
-		min=minall;
-		max=maxall;
-	}
-	///TRIGER///
-	for(int i=63;i<256+63;i++){
-		if((tempADC_read[i]>=triger)&&(tempADC_read[i+1]<triger)){
-			triger_index=i;
-			break;
+	int x_to_center=0;
+	x_to_center = (SSD1306_LCDWIDTH / 2) - ((GFX_GetStringWidth((currentPointer->name))*GFX_GetFontSize()) /2);
+	GFX_DrawString(x_to_center, 0, (currentPointer->name), WHITE, WHITE);
+	GFX_DrawLine(0, GFX_GetFontHeight()*GFX_GetFontSize(), 127,  GFX_GetFontHeight()*GFX_GetFontSize(), WHITE);
+	//GFX_SetFontSize(3);
+	tFont *tempFont=GFX_GetFont();
+	GFX_SetFont(&Font_Harry_Potter_h48);
+	wchar_t numer[3];
+	for(int i=3;i>=0;i--){
+		if(!(RtcTime.SubSeconds>230&&i==code_cursor)){
+		swprintf(numer,sizeof(numer),L"%d",CODE.tab[i]);
+		GFX_DrawString(0+((3-i)*32), 16, numer, WHITE, WHITE);
 		}
 	}
+	GFX_SetFont(tempFont);
+}
 
-	///WYŚWIETLANIE WYKRESU///
-
-	for(int i=triger_index-63;i<triger_index+127-63;i++){
-		if((max-min)==0)max++;
-		uint32_t y1=map( (uint32_t)tempADC_read[i], min, max, 0, 63);
-		if(dot_style){
-			SSD1306_DrawPixel(i-(triger_index-63), y1, 1);
-		}else{
-			uint32_t y2=(map( (uint32_t)tempADC_read[i+1], min, max, 0, 63));
-			GFX_DrawLine(i-(triger_index-63), y1, i+1-(triger_index-63), y2, 1);
-		}
-	}
-	///RYSOWANIE TRIGERA///
-	for(int i=0;i<127;i+=2){
-		int32_t trig_y=map( (uint32_t)triger, min, max, 0, 63);
-		if(trig_y>63)trig_y=63;
-		if(trig_y<0)trig_y=0;
-		SSD1306_DrawPixel(i, trig_y, 1);
-	}
-
-	wchar_t string[20];
-	swprintf(string,sizeof(string),L"%04d|%04d|%04d",adc,min,max);
-	GFX_DrawString(0, 0, string, 1, 0);
-
-}
-void switch_adaptiveHeight(void){
-	if(adaptiveHeight)adaptiveHeight=0;
-	else adaptiveHeight=1;
-}
-void switch_showStyle(void){
-	if(dot_style)dot_style=0;
-	else dot_style=1;
-}
-void increase_triger(void){
-	triger+=10;
-	if(triger>max)triger=max;
-}
-void decrease_triger(void){
-	triger-=10;
-	if(triger<min)triger=min;
-}
-void showADC(void){
+void code_menu(void){
 	temp_key_down_func=key_down_func;
 	temp_key_up_func=key_up_func;
 	temp_key_enter_func=key_enter_func;
@@ -403,11 +332,14 @@ void showADC(void){
 	temp_key_right_func=key_right_func;
 	temp_refresh_func=refresh_func;
 
-	key_up_func=increase_triger;
-	key_down_func=decrease_triger;
-	key_enter_func=showADC_back;
-	key_left_func=switch_adaptiveHeight;
-	key_right_func=switch_showStyle;
-	refresh_func=showADC_refresh;
+
+	key_up_func=code_increase;
+	key_down_func=code_decrease;
+	key_enter_func=enter_secret_menu;
+	key_left_func=code_cursor_left;
+	key_right_func=code_cursor_right;
+	refresh_func=code_menu_refresh;
+	CODE.uint=0x01020304;
+	code_cursor=3;
 }
 

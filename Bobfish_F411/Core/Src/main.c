@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "dma.h"
 #include "i2c.h"
 #include "rtc.h"
@@ -30,8 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../WS2812B/ws2812b.h"
-//#include "../WS2812B/ws2812b_fx.h"
+#include "../WS_2812B_TIMER/ws2812b_tim.h"
 #include "../MENU/menu.h"
 #include "../BITMAPS/bitmaps.h"
 #include "keyb.h"
@@ -76,10 +74,7 @@ void HAL_SYSTICK_Callback(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	//wywo³ywanie funkcji sprawdzaj¹cej klawisze co 10ms
-	if (htim->Instance == TIM3) {
-		KeybProc();
-		//HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-	}
+	if (htim->Instance == TIM3) KeybProc();
 }
 
 
@@ -171,7 +166,6 @@ int main(void)
   MX_DMA_Init();
   MX_I2C1_Init();
   MX_RTC_Init();
-  MX_ADC1_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
@@ -180,28 +174,13 @@ int main(void)
 
   menu_init(&hi2c1);
 
+  ws2812b_init(&htim2, TIM_CHANNEL_1);
+
   HAL_TIM_Base_Start_IT(&htim3);
-  HAL_TIM_Base_Start(&htim2);
-  //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_read[0].word, SAMPLE_NUM);
 
   HAL_RTC_GetTime(&hrtc, &RtcTime, RTC_FORMAT_BIN);
   HAL_RTC_GetDate(&hrtc, &RtcDate, RTC_FORMAT_BIN);
-  //HAL_GPIO_Init(LED_GPIO_Port, LED_Pin);
 
-  //HAL_UART_Transmit_DMA(&huart1, ADC_read.byte , 1);
-  //uint8_t aa=0xAA;
-  WS2812B_Init(&hspi1);
-  WS2812B_SetDiodeRGB(0, 128, 128, 128);
-  WS2812B_Refresh();
-  //WS2812BFX_Init(1);
-  //WS2812BFX_SetSegmentSize(0, 0, 7);
-  //WS2812BFX_SetSpeed(0,customEfekt_speed.uint32);
-  //WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
-  //WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
-  //WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
-  //WS2812BFX_SetMode(0, customEfekt_numer.byte);
-
-  //WS2812BFX_Start(0);
   menu_refresh();
 
 
@@ -212,13 +191,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  WS2812B_Refresh();
+	ws2812b_setHSV(0, 0, 255, 255);
+	ws2812b_refresh();
 
-	//WS2812BFX_Callback();
-
-	//HAL_UART_Transmit(&huart1, &aa, 1, 100);
-	//HAL_UART_Transmit_DMA(&huart1, ADC_read.byte , 2);
-	//core_loop();
 
 	if(IsKey(ANYKEY)&&buzzer_state.byte){
 	  HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_SET);

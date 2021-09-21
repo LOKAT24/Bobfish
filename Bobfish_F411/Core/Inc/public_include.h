@@ -18,7 +18,7 @@
 
 #include "../SSD_1306_lib/GFX_BW.h"
 #include "../SSD_1306_lib/OLED_SSD1306.h"
-#include "../WS2812B/ws2812b.h"
+#include "../WS_2812B_TIMER/ws2812b_tim.h"
 #include "../MENU/menu_callbacks.h"
 #include "../MENU/menu_variables.h"
 
