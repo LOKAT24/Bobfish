@@ -22,9 +22,9 @@
 #define _Font_small_ 1
 #define _Font_kuchen_ 0
 #define _Font_Harry_Potter_h48_ 1
-#define _Font_Big_1_ 0
+#define _Font_Big_1_ 1
 #define _Font_3D_ 0
-#define _Font_Gothic_7x13_ 1
+#define _Font_Gothic_7x13_ 0
 
 
 

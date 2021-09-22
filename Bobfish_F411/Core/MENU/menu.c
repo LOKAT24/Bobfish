@@ -18,23 +18,22 @@ menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran star
 			menu_t menu_1_1_4 = { L"Dzień/noc", NULL, &menu_1_1_3, NULL, &menu_1_1, value_change, &trybLed_var}; //Dzień/noc
 		menu_t menu_1_2 = { L"Opcje", &menu_1_3, &menu_1_1, &menu_1_2_1, &menu_1, NULL, NULL}; //OPCJE
 			menu_t menu_1_2_1 =	{ L"Godzina", &menu_1_2_2, &menu_1_2_7, NULL, &menu_1_2, value_change, &godzina_var}; //Godzina
-			menu_t menu_1_2_2 = { L"Data", &menu_1_2_3, &menu_1_2_1, NULL, &menu_1_2, value_change, &data_var}; //DATA
-			menu_t menu_1_2_3 = { L"Kreator efektu", &menu_1_2_4, &menu_1_2_2, &menu_1_2_3_1, &menu_1_2, NULL, NULL}; //Kreator efektu
-				menu_t menu_1_2_3_1 = { L"Numer efektu", &menu_1_2_3_2, &menu_1_2_3_5, NULL, &menu_1_2_3, value_change, &customEfekt_numer}; //Numer efektu
-				menu_t menu_1_2_3_2 = { L"Kolor 1", &menu_1_2_3_3, &menu_1_2_3_1, NULL, &menu_1_2_3, value_change, &customEfekt_color1}; //Kolor 1
-				menu_t menu_1_2_3_3 = { L"Kolor 2", &menu_1_2_3_4, &menu_1_2_3_2, NULL, &menu_1_2_3, value_change, &customEfekt_color2}; //Kolor 2
-				menu_t menu_1_2_3_4 = { L"Kolor 3", &menu_1_2_3_5, &menu_1_2_3_3, NULL, &menu_1_2_3, value_change, &customEfekt_color3}; //Kolor 3
-				menu_t menu_1_2_3_5 = { L"Szybkość", NULL, &menu_1_2_3_4, NULL, &menu_1_2_3, value_change, &customEfekt_speed}; //Szybkość
-			menu_t menu_1_2_4 = { L"Build", &menu_1_2_5, &menu_1_2_3, &menu_1_2_4_1, &menu_1_2, NULL, NULL}; //Build
+			menu_t menu_1_2_2 = { L"Data", &menu_1_2_4, &menu_1_2_1, NULL, &menu_1_2, value_change, &data_var}; //DATA
+			menu_t menu_1_2_4 = { L"Build", &menu_1_2_5, &menu_1_2_2, &menu_1_2_4_1, &menu_1_2, NULL, NULL}; //Build
 				menu_t menu_1_2_4_1 = { L"G:", &menu_1_2_4_2, &menu_1_2_4_2, NULL, &menu_1_2_4, NULL, &build_time}; //Build time
 				menu_t menu_1_2_4_2 = { L"D:", NULL, &menu_1_2_4_1, NULL, &menu_1_2_4, NULL, &build_date}; //Build date
 			menu_t menu_1_2_5 = { L"Save(date/time)", &menu_1_2_6, &menu_1_2_4, NULL, &menu_1_2, value_change, &change_time_flag}; //Save(time/date)
 			menu_t menu_1_2_6 = { L"Buzzer", &menu_1_2_7, &menu_1_2_5, NULL, &menu_1_2, value_change, &buzzer_state};
 			menu_t menu_1_2_7 = { L"Menu serwis", NULL, &menu_1_2_6, NULL, &menu_1_2, code_menu, NULL}; //Save(time/date)
-		menu_t menu_1_X1 = { L"~Oscyloskop~", NULL, NULL, NULL, &menu_1, NULL, NULL}; //Oscyloskop
-		menu_t menu_1_3 = { L"Play \"SNAKE II\"", NULL, &menu_1_2, NULL, &menu_1, snake_play, NULL}; //Snake
+		menu_t menu_1_3 = { L"Kreator efektu", NULL, &menu_1_2, &menu_1_3_1, &menu_1, NULL, NULL}; //Kreator efektu
+			menu_t menu_1_3_1 = { L"Numer efektu", &menu_1_3_2, &menu_1_3_4, NULL, &menu_1_3, value_change, &customEfekt_numer}; //Numer efektu
+			menu_t menu_1_3_2 = { L"Kolor 1", &menu_1_3_3, &menu_1_3_1, NULL, &menu_1_3, value_change, &customEfekt_color1}; //Kolor 1
+			menu_t menu_1_3_3 = { L"Kolor 2", &menu_1_3_4, &menu_1_3_2, NULL, &menu_1_3, value_change, &customEfekt_color2}; //Kolor 2
+			menu_t menu_1_3_4 = { L"Szybkość", NULL, &menu_1_3_3, NULL, &menu_1_3, value_change, &customEfekt_speed}; //Szybkość efektu
 	menu_t menu_2 = { L"Boczne menu", NULL, NULL, NULL, &menu_0, NULL, NULL}; //menu boczne
 
+	menu_t menu_1_X1 = { L"~Oscyloskop~", NULL, NULL, NULL, &menu_1, NULL, NULL}; //Oscyloskop
+	menu_t menu_1_X2 = { L"Play \"SNAKE II\"", NULL, NULL, NULL, &menu_1, snake_play, NULL}; //Snake
 
 menu_t *currentPointer = &menu_1;
 
@@ -131,7 +130,7 @@ void menu_refresh(void) {
 		GFX_SetFont(&Font_Times_New_Roman);
 		wchar_t godz_str[10];
 		wchar_t data_str[30];
-		swprintf(godz_str,sizeof(godz_str),L"%02d%c%02d%c%02d",RtcTime.Hours,(RtcTime.SubSeconds>127)?L':':' ',RtcTime.Minutes,(RtcTime.SubSeconds>127)?L':':' ',RtcTime.Seconds);
+		swprintf(godz_str,sizeof(godz_str),L"%02d%c%02d%c%02d",RtcTime.Hours,(RtcTime.SubSeconds>64&&RtcTime.SubSeconds<192)?L':':' ',RtcTime.Minutes,(RtcTime.SubSeconds>64&&RtcTime.SubSeconds<192)?L':':' ',RtcTime.Seconds);
 		swprintf(data_str,sizeof(data_str),L"%02d/%02d/20%02d",RtcDate.Date,RtcDate.Month,RtcDate.Year);
 		GFX_DrawString(127/2-GFX_GetStringWidth(data_str)/2, 63-GFX_GetFontHeight()*GFX_GetFontSize(), data_str, WHITE, WHITE);
 		GFX_SetFontSize(2);
@@ -260,6 +259,7 @@ void menu_init(I2C_HandleTypeDef *i2c) {
 	refresh_func=menu_refresh;
 	menu_refresh();
 	SSD1306_Clear(BLACK);
+	SSD1306_SetContrast(displayContrast.byte);
 	SSD1306_Display();
 }
 

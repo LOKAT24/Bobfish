@@ -65,20 +65,19 @@ menu_t menu_0;//ekran startowy
 		menu_t menu_1_2;//OPCJE
 			menu_t menu_1_2_1;//Godzina
 			menu_t menu_1_2_2;//DATA
-			menu_t menu_1_2_3;//Kreator efektu
-				menu_t menu_1_2_3_1;//Numer efektu
-				menu_t menu_1_2_3_2;//Kolor 1
-				menu_t menu_1_2_3_3;//Kolor 2
-				menu_t menu_1_2_3_4;//Kolor 3
-				menu_t menu_1_2_3_5;//Szybkość
 			menu_t menu_1_2_4;//Build
 				menu_t menu_1_2_4_1;//Build Time
 				menu_t menu_1_2_4_2;//Build Date
 			menu_t menu_1_2_5; //Save(time/date)
 			menu_t menu_1_2_6; //Buzzer
 			menu_t menu_1_2_7; //Menu serwis
+		menu_t menu_1_3;//Kreator efektu
+			menu_t menu_1_3_1;//Numer efektu
+			menu_t menu_1_3_2;//Kolor 1
+			menu_t menu_1_3_3;//Kolor 2
+			menu_t menu_1_3_4;//Szybkośc efektu
 		menu_t menu_1_X1;//Oscyloskop
-		menu_t menu_1_3; //Snake
+		menu_t menu_1_X2;//Snake
 	menu_t menu_2;//menu boczne
 
 

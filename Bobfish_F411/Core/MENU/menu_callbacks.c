@@ -126,10 +126,6 @@ void value_decrease(void){
 				((currentPointer->variable)->color_hsv.v)--;
 				break;
 			}
-			//WS2812BFX_Stop(0);
-			//WS2812BFX_SetColorHSV(0, (currentPointer->variable)->color_hsv.h, (currentPointer->variable)->color_hsv.s, (currentPointer->variable)->color_hsv.v);
-			//WS2812BFX_SetMode(0, FX_MODE_STATIC);
-			//WS2812BFX_Start(0);
 			break;
 		case _string:
 			//swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
@@ -148,7 +144,6 @@ void value_increase(void){
 			((currentPointer->variable)->byte)++;
 			if(currentPointer->variable==&customEfekt_numer){
 				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=0;
-				//WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
 			}
 			break;
 		case _float:
@@ -160,9 +155,6 @@ void value_increase(void){
 		case _uint:
 			((currentPointer->variable)->uint32)++;
 			if((currentPointer->variable)->uint32>65535)((currentPointer->variable)->uint32)=65535;
-			//WS2812BFX_Stop(0);
-			//WS2812BFX_SetSpeed(0,(currentPointer->variable)->uint32);
-			//WS2812BFX_Start(0);
 			break;
 		case _RTC_Time:
 			((currentPointer->variable)->tab[value_cursor])++;
@@ -196,10 +188,6 @@ void value_increase(void){
 				((currentPointer->variable)->color_hsv.v)++;
 				break;
 			}
-			//WS2812BFX_Stop(0);
-			//WS2812BFX_SetColorHSV(0, (currentPointer->variable)->color_hsv.h, (currentPointer->variable)->color_hsv.s, (currentPointer->variable)->color_hsv.v);
-			//WS2812BFX_SetMode(0, FX_MODE_STATIC);
-			//WS2812BFX_Start(0);
 			break;
 		case _string:
 			//swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
@@ -273,7 +261,7 @@ union Code_t{
 	uint8_t tab[4];
 };
 union Code_t CODE={0x01020304};
-union Code_t SECRET_CODE={0x06090609};
+union Code_t SECRET_CODE={0x01000000};
 
 uint8_t code_cursor=3;
 
@@ -293,7 +281,9 @@ void enter_secret_menu(void){
 	key_right_func=temp_key_right_func;
 	refresh_func=temp_refresh_func;
 	if(CODE.uint==SECRET_CODE.uint){
-		currentPointer=&menu_1_1_3;
+
+		snake_play();
+
 	}
 
 }
@@ -313,12 +303,12 @@ void code_menu_refresh(void){
 	GFX_DrawLine(0, GFX_GetFontHeight()*GFX_GetFontSize(), 127,  GFX_GetFontHeight()*GFX_GetFontSize(), WHITE);
 	//GFX_SetFontSize(3);
 	tFont *tempFont=GFX_GetFont();
-	GFX_SetFont(&Font_Harry_Potter_h48);
+	GFX_SetFont(&Font_LED);
 	wchar_t numer[3];
 	for(int i=3;i>=0;i--){
-		if(!(RtcTime.SubSeconds>230&&i==code_cursor)){
+		if(!((RtcTime.SubSeconds%127>90)&&i==code_cursor)){
 		swprintf(numer,sizeof(numer),L"%d",CODE.tab[i]);
-		GFX_DrawString(0+((3-i)*32), 16, numer, WHITE, WHITE);
+		GFX_DrawString(0+((3-i)*32), 10, numer, WHITE, WHITE);
 		}
 	}
 	GFX_SetFont(tempFont);
@@ -339,7 +329,7 @@ void code_menu(void){
 	key_left_func=code_cursor_left;
 	key_right_func=code_cursor_right;
 	refresh_func=code_menu_refresh;
-	CODE.uint=0x01020304;
+	CODE.uint=0x00000000;
 	code_cursor=3;
 }
 

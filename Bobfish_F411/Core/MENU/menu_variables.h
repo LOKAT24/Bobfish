@@ -55,6 +55,7 @@ extern menu_variable_t data_var;
 extern menu_variable_t build_date;
 extern menu_variable_t build_time;
 extern menu_variable_t change_time_flag;
+extern menu_variable_t displayContrast;
 
 
 

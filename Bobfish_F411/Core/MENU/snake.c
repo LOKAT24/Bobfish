@@ -221,15 +221,63 @@ void snake_lose(void){
 	//refresh_func=
 }
 
-void snake_exit(void){
-	free(snake_tab);
-	key_down_func=temp_key_down_func;
-	key_up_func=temp_key_up_func;
-	key_enter_func=temp_key_enter_func;
-	key_left_func=temp_key_left_func;
-	key_right_func=temp_key_right_func;
-	refresh_func=temp_refresh_func;
+uint8_t exit_cursor=0;
+void snake_exit_question_menu(void);
 
+void snake_exit(void){
+	if(exit_cursor==1){
+		free(snake_tab);
+
+		key_down_func=temp_key_down_func;
+		key_up_func=temp_key_up_func;
+		key_enter_func=temp_key_enter_func;
+		key_left_func=temp_key_left_func;
+		key_right_func=temp_key_right_func;
+		refresh_func=temp_refresh_func;
+	}else{
+		key_up_func=snake_up;
+		key_down_func=snake_down;
+		key_enter_func=snake_exit_question_menu;
+		key_left_func=snake_left;
+		key_right_func=snake_right;
+		refresh_func=snake_refresh;
+	}
+
+}
+void snake_exit_question_menu_cursorChange(void){
+	if(exit_cursor==0)exit_cursor=1;
+	else exit_cursor=0;
+}
+
+void snake_exit_question_menu_refresh(void){
+	uint8_t w=90;
+	uint8_t h=40;
+	uint8_t x=SSD1306_LCDWIDTH/2 - w/2;
+	uint8_t y=SSD1306_LCDHEIGHT/2 - h/2;
+	GFX_DrawFillRoundRectangle(x, y, w, h, 6, WHITE);
+	//tFont *tempFont=GFX_GetFont();
+	wchar_t* str1=L"Wyjść?";
+	int x_to_center = (SSD1306_LCDWIDTH / 2) - ((GFX_GetStringWidth(str1)*GFX_GetFontSize()) /2);
+	GFX_DrawString(x_to_center, 16, L"Wyjść?", BLACK, WHITE);
+	wchar_t *str2=L"Nie";
+	if(!((RtcTime.SubSeconds%127>90)&&exit_cursor==0)){
+		x_to_center = 64-24 - ((GFX_GetStringWidth(str2)*GFX_GetFontSize()) /2);
+		GFX_DrawString(x_to_center, 32, str2, BLACK, WHITE);
+	}
+	wchar_t *str3=L"Tak";
+	if(!((RtcTime.SubSeconds%127>90)&&exit_cursor==1)){
+		x_to_center = 64+24 - ((GFX_GetStringWidth(str3)*GFX_GetFontSize()) /2);
+		GFX_DrawString(x_to_center, 32, str3, BLACK, WHITE);
+	}
+}
+
+void snake_exit_question_menu(void){
+	key_down_func=NULL;
+	key_up_func=NULL;
+	key_enter_func=snake_exit;
+	key_left_func=snake_exit_question_menu_cursorChange;
+	key_right_func=snake_exit_question_menu_cursorChange;
+	refresh_func=snake_exit_question_menu_refresh;
 }
 
 void snake_play(void){
@@ -244,16 +292,16 @@ void snake_play(void){
 
 	key_up_func=snake_up;
 	key_down_func=snake_down;
-	key_enter_func=snake_exit;
+	key_enter_func=snake_exit_question_menu;
 	key_left_func=snake_left;
 	key_right_func=snake_right;
 	refresh_func=snake_logo;
 
 }
 
+uint32_t temp_time=0;
+uint8_t return_flag=1;
 uint8_t wait(uint32_t time){
-	static uint32_t temp_time=0;
-	static uint8_t return_flag=1;
 	if(return_flag){
 		temp_time=HAL_GetTick();
 		return_flag=0;
