@@ -68,7 +68,7 @@ menu_t menu_0;//ekran startowy
 			menu_t menu_1_2_4;//Build
 				menu_t menu_1_2_4_1;//Build Time
 				menu_t menu_1_2_4_2;//Build Date
-			menu_t menu_1_2_5; //Save(time/date)
+			menu_t menu_1_2_5; //kontrast ekranu
 			menu_t menu_1_2_6; //Buzzer
 			menu_t menu_1_2_7; //Menu serwis
 		menu_t menu_1_3;//Kreator efektu
@@ -76,6 +76,11 @@ menu_t menu_0;//ekran startowy
 			menu_t menu_1_3_2;//Kolor 1
 			menu_t menu_1_3_3;//Kolor 2
 			menu_t menu_1_3_4;//Szybkośc efektu
+		menu_t menu_1_4;
+			menu_t menu_1_4_1;
+			menu_t menu_1_4_2;
+			menu_t menu_1_4_3;
+
 		menu_t menu_1_X1;//Oscyloskop
 		menu_t menu_1_X2;//Snake
 	menu_t menu_2;//menu boczne
@@ -102,6 +107,7 @@ void menu_enter(void);
 void menu_back(void);
 //void core_loop(void);
 uint8_t menu_get_index(menu_t *q);
+uint8_t menu_get_numberOfSubmenus(menu_t *q);
 
 
 void (*key_down_func)(void);// = &menu_next;

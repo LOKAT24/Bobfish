@@ -11,26 +11,31 @@
 
 menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran startowy
 	menu_t menu_1 = { L"* MENU *", NULL, NULL, &menu_1_1, NULL, NULL, NULL}; //menu głowne
-		menu_t menu_1_1 = { L"Tryb LED'ów", &menu_1_2, &menu_1_3, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
+		menu_t menu_1_1 = { L"Tryb LED'ów", &menu_1_2, &menu_1_4, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
 			menu_t menu_1_1_1 = { L"Stały kolor 1", &menu_1_1_2, &menu_1_1_4, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 1
 			menu_t menu_1_1_2 = { L"Stały kolor 2", &menu_1_1_3, &menu_1_1_1, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 2
 			menu_t menu_1_1_3 = { L"Efekt", &menu_1_1_4, &menu_1_1_2, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały efekt
 			menu_t menu_1_1_4 = { L"Dzień/noc", NULL, &menu_1_1_3, NULL, &menu_1_1, value_change, &trybLed_var}; //Dzień/noc
-		menu_t menu_1_2 = { L"Opcje", &menu_1_3, &menu_1_1, &menu_1_2_1, &menu_1, NULL, NULL}; //OPCJE
+		menu_t menu_1_2 = { L"Opcje", &menu_1_3, &menu_1_1, &menu_1_2_1, &menu_1, refresh_dateTime, NULL}; //OPCJE
 			menu_t menu_1_2_1 =	{ L"Godzina", &menu_1_2_2, &menu_1_2_7, NULL, &menu_1_2, value_change, &godzina_var}; //Godzina
 			menu_t menu_1_2_2 = { L"Data", &menu_1_2_4, &menu_1_2_1, NULL, &menu_1_2, value_change, &data_var}; //DATA
 			menu_t menu_1_2_4 = { L"Build", &menu_1_2_5, &menu_1_2_2, &menu_1_2_4_1, &menu_1_2, NULL, NULL}; //Build
 				menu_t menu_1_2_4_1 = { L"G:", &menu_1_2_4_2, &menu_1_2_4_2, NULL, &menu_1_2_4, NULL, &build_time}; //Build time
 				menu_t menu_1_2_4_2 = { L"D:", NULL, &menu_1_2_4_1, NULL, &menu_1_2_4, NULL, &build_date}; //Build date
-			menu_t menu_1_2_5 = { L"Save(date/time)", &menu_1_2_6, &menu_1_2_4, NULL, &menu_1_2, value_change, &change_time_flag}; //Save(time/date)
+			menu_t menu_1_2_5 = { L"Kontrast", &menu_1_2_6, &menu_1_2_4, NULL, &menu_1_2, value_change, &displayContrast}; //Kontrast ekranu
 			menu_t menu_1_2_6 = { L"Buzzer", &menu_1_2_7, &menu_1_2_5, NULL, &menu_1_2, value_change, &buzzer_state};
 			menu_t menu_1_2_7 = { L"Menu serwis", NULL, &menu_1_2_6, NULL, &menu_1_2, code_menu, NULL}; //Save(time/date)
-		menu_t menu_1_3 = { L"Kreator efektu", NULL, &menu_1_2, &menu_1_3_1, &menu_1, NULL, NULL}; //Kreator efektu
+		menu_t menu_1_3 = { L"Kreator efektu", &menu_1_4, &menu_1_2, &menu_1_3_1, &menu_1, NULL, NULL}; //Kreator efektu
 			menu_t menu_1_3_1 = { L"Numer efektu", &menu_1_3_2, &menu_1_3_4, NULL, &menu_1_3, value_change, &customEfekt_numer}; //Numer efektu
 			menu_t menu_1_3_2 = { L"Kolor 1", &menu_1_3_3, &menu_1_3_1, NULL, &menu_1_3, value_change, &customEfekt_color1}; //Kolor 1
 			menu_t menu_1_3_3 = { L"Kolor 2", &menu_1_3_4, &menu_1_3_2, NULL, &menu_1_3, value_change, &customEfekt_color2}; //Kolor 2
 			menu_t menu_1_3_4 = { L"Szybkość", NULL, &menu_1_3_3, NULL, &menu_1_3, value_change, &customEfekt_speed}; //Szybkość efektu
-	menu_t menu_2 = { L"Boczne menu", NULL, NULL, NULL, &menu_0, NULL, NULL}; //menu boczne
+		menu_t menu_1_4 = { L"Dzień/Noc", NULL, &menu_1_3, &menu_1_4_1, &menu_1, NULL, NULL};
+			menu_t menu_1_4_1 = { L"Praca", &menu_1_4_2, &menu_1_4_3, NULL, &menu_1_4, value_change, &dzien_noc_flag};
+			menu_t menu_1_4_2 = { L"Rano", &menu_1_4_3, &menu_1_4_1, NULL, &menu_1_4, value_change, &czas_rano};
+			menu_t menu_1_4_3 = { L"Wieczór", NULL, &menu_1_4_2, NULL, &menu_1_4, value_change, &czas_wieczor};
+
+		menu_t menu_2 = { L"Boczne menu", NULL, NULL, NULL, &menu_0, NULL, NULL}; //menu boczne
 
 	menu_t menu_1_X1 = { L"~Oscyloskop~", NULL, NULL, NULL, &menu_1, NULL, NULL}; //Oscyloskop
 	menu_t menu_1_X2 = { L"Play \"SNAKE II\"", NULL, NULL, NULL, &menu_1, snake_play, NULL}; //Snake
@@ -41,6 +46,7 @@ uint8_t menu_index=0;
 uint8_t lcd_row_pos=0;
 uint8_t lcd_row_pos_level[10];
 uint8_t menu_rows;
+uint8_t number_of_submenus;
 
 void menu_refresh(void) {
 	menu_t *temp=NULL;
@@ -60,10 +66,13 @@ void menu_refresh(void) {
 			temp = temp->next;
 		}
 
+/****************************************************************************************************************************************
+															Wyświetlanie podmenu:
+***************************************************************************************************************************************/
 		for (int i = 1; i < menu_rows; i++)
 		{
-			if (temp == currentPointer) GFX_DrawChar(0, i*GFX_GetFontHeight()+1, '>', WHITE, WHITE); // kursor
-			GFX_DrawString(10, i*GFX_GetFontHeight(), temp->name, WHITE, WHITE);
+			uint8_t y_draw=i*GFX_GetFontHeight()+2;
+			GFX_DrawString(10, y_draw, temp->name, WHITE, WHITE);
 
 /****************************************************************************************************************************************
 														Wyświetlanie warości zmiennych:
@@ -110,11 +119,31 @@ void menu_refresh(void) {
 					break;
 				}
 				uint8_t x_pos=127-GFX_GetStringWidth(value)*GFX_GetFontSize();
-				GFX_DrawString(x_pos, i*GFX_GetFontHeight()+1, value, WHITE, WHITE);
+				GFX_DrawString(x_pos, y_draw, value, WHITE, WHITE);
 			}
+
+			if (temp == currentPointer){
+				//GFX_DrawChar(0, i*GFX_GetFontHeight()+1, '>', WHITE, WHITE); // kursor
+				//GFX_DrawFastVLine(RtcTime.SubSeconds%127, i*GFX_GetFontHeight()+1, GFX_GetFontHeight(), BLACK);
+				int str_len=GFX_GetStringWidth(temp->name)*GFX_GetFontSize();
+
+				GFX_DrawFillRectangle(10, y_draw, str_len, GFX_GetFontHeight(), INVERSE);
+			}
+
 			if(temp)temp = temp->next;
 			if (!temp) break;
 		}
+/****************************************************************************************************************************************
+															Wyświetlanie paska przewijania
+***************************************************************************************************************************************/
+		number_of_submenus=menu_get_numberOfSubmenus(currentPointer);
+		uint8_t slider_startX=GFX_GetFontHeight()+2;
+		GFX_DrawLine(3, slider_startX, 3, 127, WHITE);
+		uint8_t slider_height=64-slider_startX;
+		uint8_t rect_height=slider_height/number_of_submenus;
+
+		GFX_DrawFillRectangle(1, slider_startX+2+menu_get_index(currentPointer)*rect_height, 5, rect_height, WHITE);
+
 	}
 /****************************************************************************************************************************************
 															Wyświetlanie ekranu głownego
@@ -168,6 +197,19 @@ uint8_t menu_get_level(menu_t *q) {
 		i++;
 	}
 
+	return i;
+}
+
+uint8_t menu_get_numberOfSubmenus(menu_t *q){
+	uint8_t i=1;
+
+	if (!q->parent) return 0;
+	menu_t *temp=q->parent->child;
+
+	while(temp->next!=NULL){
+		temp=temp->next;
+		i++;
+	}
 	return i;
 }
 

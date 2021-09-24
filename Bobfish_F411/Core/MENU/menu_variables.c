@@ -24,6 +24,9 @@ menu_variable_t customEfekt_speed={ .type=_uint, .uint32=50};
 menu_variable_t change_time_flag={ .type=_bool, .byte=0};
 menu_variable_t trybLed_var={ .type=_select, .byte=0};
 menu_variable_t displayContrast={.type=_byte, .byte=1};
+menu_variable_t czas_rano={ .type=_RTC_Time, .tab={6,0}};
+menu_variable_t czas_wieczor={ .type=_RTC_Time, .tab={18,0}};
+menu_variable_t dzien_noc_flag={ .type=_bool, .byte=0};
 
 
 menu_variable_t build_date={ .type=_string, .string=build_date_wstring};
@@ -32,6 +35,9 @@ menu_variable_t build_time={ .type=_string, .string=build_time_wstring};
 
 void menu_variables_init(void){
 	uint8_t i;
+	if(trybLed_var.byte==3)dzien_noc_flag.byte=1;
+	else dzien_noc_flag.byte=0;
+
 	for(i=0;build_time_string[i];i++){
 		build_time_wstring[i]=build_time_string[i];
 	}

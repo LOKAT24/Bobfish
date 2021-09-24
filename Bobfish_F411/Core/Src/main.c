@@ -204,28 +204,6 @@ int main(void)
 	key_press(key);
 
 
-	if(change_time_flag.byte){
-	  change_time_flag.byte=0;
-	  RTC_TimeTypeDef teraz;
-	  teraz.Hours=godzina_var.tab[0];
-	  teraz.Minutes=godzina_var.tab[1];
-	  teraz.Seconds=0;
-	  teraz.TimeFormat=0;
-	  teraz.SubSeconds=0;
-	  teraz.SecondFraction=255;
-	  teraz.DayLightSaving=0;
-	  teraz.StoreOperation=0;
-	  // dzien tygodnia,miesiac,dzien,rok
-	  RTC_DateTypeDef teraz_data;
-	  teraz_data.WeekDay=1;
-	  teraz_data.Date=data_var.tab[0];
-	  teraz_data.Month=data_var.tab[1];
-	  teraz_data.Year=data_var.tab[2];
-
-	  HAL_RTC_SetDate(&hrtc, &teraz_data, RTC_FORMAT_BIN);
-	  HAL_RTC_SetTime(&hrtc,&teraz , RTC_FORMAT_BIN);
-	}
-
 	HAL_RTC_GetTime(&hrtc, &RtcTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &RtcDate, RTC_FORMAT_BIN);
 

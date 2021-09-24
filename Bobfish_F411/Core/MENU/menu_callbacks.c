@@ -33,19 +33,31 @@ uint8_t value_cursor=0;
 
 void value_change_refresh(void){
 	menu_refresh();
-	//wchar_t temp_string[20];
-	if(currentPointer->variable->type==_Color_HSV){
-		//swprintf(temp_string,sizeof(temp_string),L"H:%03d|S:%03d|V:%03d",currentPointer->variable->color_hsv.h,currentPointer->variable->color_hsv.s,currentPointer->variable->color_hsv.v);
-		//uint8_t char_width=GFX_GetFontMaxWidth();
+	if(currentPointer->variable->type==_RTC_Time){
+		GFX_DrawFillRoundRectangle(10, 10, 107, 43, 5, WHITE);
+		wchar_t *str[20];
+		swprintf(str,sizeof(str),L"%ls",currentPointer->name);
+		uint8_t x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str)/2;
+		GFX_DrawString(x_pos, 13, str, BLACK, WHITE);
+		wchar_t *str_g[3];
+		wchar_t *str_m[3];
+		swprintf(str_g,sizeof(str_g),L"%02d",(currentPointer->variable)->tab[0]);
+		swprintf(str_m,sizeof(str_m),L"%02d",(currentPointer->variable)->tab[1]);
+		//swprintf(str,sizeof(str),L"%ls:%ls",(RtcTime.SubSeconds%127>90)&&value_cursor==0?L"   ":str_g,(RtcTime.SubSeconds%127>90)&&value_cursor==1?L"   ":str_m);
+		//x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str)/2;
+		//GFX_DrawString(x_pos, 15+GFX_GetFontHeight(), str, BLACK, WHITE);
+		uint8_t dot_x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(L":")/2;
+		GFX_DrawString(dot_x_pos,  15+GFX_GetFontHeight(), L":", BLACK, WHITE);
+		if(!((RtcTime.SubSeconds%127>90)&&value_cursor==0))
+			GFX_DrawString(dot_x_pos-GFX_GetStringWidth(str_g),  15+GFX_GetFontHeight(), str_g, BLACK, WHITE);
+		if(!((RtcTime.SubSeconds%127>90)&&value_cursor==1))
+			GFX_DrawString(dot_x_pos+GFX_GetStringWidth(L":"),  15+GFX_GetFontHeight(), str_m, BLACK, WHITE);
 
-
-		GFX_DrawFillRoundRectangle((127-60)+20*value_cursor, (lcd_row_pos+1)*GFX_GetFontHeight(), 20, GFX_GetFontHeight(), 2, INVERSE);
-
-
-	}else{
-		GFX_DrawLine(90, (lcd_row_pos+2)*GFX_GetFontHeight(), 127, (lcd_row_pos+2)*GFX_GetFontHeight(), 1);
 	}
 
+
+
+	//GFX_DrawLine(90, (lcd_row_pos+2)*GFX_GetFontHeight(), 127, (lcd_row_pos+2)*GFX_GetFontHeight(), 1);
 }
 
 void value_save(void){
@@ -55,19 +67,50 @@ void value_save(void){
 	key_left_func=temp_key_left_func;
 	key_right_func=temp_key_right_func;
 	refresh_func=temp_refresh_func;
+	menu_variable_t *ptr=currentPointer->variable;
 
-	if(currentPointer->variable==&customEfekt_color1||currentPointer->variable==&customEfekt_color2||currentPointer->variable==&customEfekt_color3){
+	if(ptr==&customEfekt_color1||ptr==&customEfekt_color2||ptr==&customEfekt_color3){
 		//WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
 		//WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
 		//WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
 		//WS2812BFX_SetMode(0, customEfekt_numer.byte);
 		//WS2812BFX_Start(0);
 	}
-	if(currentPointer->variable==&customEfekt_numer){
+	if(ptr==&customEfekt_numer){
 
 		//WS2812BFX_Start(0);
 	}
+
+	if(ptr==&godzina_var||ptr==&data_var){
+
+	  RTC_TimeTypeDef teraz;
+	  teraz.Hours=godzina_var.tab[0];
+	  teraz.Minutes=godzina_var.tab[1];
+	  teraz.Seconds=0;
+	  teraz.TimeFormat=0;
+	  teraz.SubSeconds=0;
+	  teraz.SecondFraction=255;
+	  teraz.DayLightSaving=0;
+	  teraz.StoreOperation=0;
+	  // dzien tygodnia,miesiac,dzien,rok
+	  RTC_DateTypeDef teraz_data;
+	  teraz_data.WeekDay=1;
+	  teraz_data.Date=data_var.tab[0];
+	  teraz_data.Month=data_var.tab[1];
+	  teraz_data.Year=data_var.tab[2];
+
+	  HAL_RTC_SetDate(&hrtc, &teraz_data, RTC_FORMAT_BIN);
+	  HAL_RTC_SetTime(&hrtc,&teraz , RTC_FORMAT_BIN);
+
+	}
 	menu_refresh();
+}
+
+void contrast_refresh(void){
+	uint32_t contrast=map(displayContrast.byte,0,100,0,255);
+	while(!(hi2c1.hdmatx->State == HAL_DMA_STATE_READY));
+	while(!(hi2c1.State==HAL_I2C_STATE_READY));
+	SSD1306_SetContrast(contrast);
 }
 
 void value_decrease(void){
@@ -79,6 +122,10 @@ void value_decrease(void){
 				//WS2812BFX_PrevMode(0);
 				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=57;
 				//WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
+			}
+			if(currentPointer->variable==&displayContrast){
+				if((currentPointer->variable)->byte<1)(currentPointer->variable)->byte=1;
+				contrast_refresh();
 			}
 			break;
 		case _float:
@@ -96,9 +143,40 @@ void value_decrease(void){
 			break;
 		case _RTC_Time:
 			((currentPointer->variable)->tab[value_cursor])--;
+			if(value_cursor==0){//godzina
+				if((currentPointer->variable)->tab[0]>=24)(currentPointer->variable)->tab[0]=23;
+			}else{//minuta
+				if((currentPointer->variable)->tab[1]>=60)(currentPointer->variable)->tab[1]=59;
+			}
 			break;
 		case _RTC_Date:
 			((currentPointer->variable)->tab[value_cursor])--;
+			uint8_t *temp_tab=(currentPointer->variable)->tab;
+
+			if(value_cursor==0){		//dzień
+				switch (temp_tab[1]) {
+					case 2:		//28 lub 29 dni
+						if(temp_tab[2]%4){	//rok nieprzestępny
+							if(temp_tab[value_cursor]<1)temp_tab[value_cursor]=28;
+						}else{	//rok przestępny
+							if(temp_tab[value_cursor]<1)temp_tab[value_cursor]=29;
+						}
+						break;
+					case 4:
+					case 6:
+					case 9:
+					case 11:	//30 dni
+						if(temp_tab[value_cursor]<1)temp_tab[value_cursor]=30;
+						break;
+					default:	//31 dni
+						if(temp_tab[value_cursor]<1)temp_tab[value_cursor]=31;
+						break;
+				}
+			}if(value_cursor==1){		//miesiąc
+				if(temp_tab[value_cursor]<1)temp_tab[value_cursor]=12;
+			}else{						//rok
+				if(temp_tab[value_cursor]>250)temp_tab[value_cursor]=99;
+			}
 			break;
 		case _Color_RGB:
 			switch(value_cursor){
@@ -145,6 +223,10 @@ void value_increase(void){
 			if(currentPointer->variable==&customEfekt_numer){
 				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=0;
 			}
+			if(currentPointer->variable==&displayContrast){
+				if((currentPointer->variable)->byte>100)(currentPointer->variable)->byte=100;
+				contrast_refresh();
+			}
 			break;
 		case _float:
 			((currentPointer->variable)->float_)+=0.1;
@@ -158,9 +240,41 @@ void value_increase(void){
 			break;
 		case _RTC_Time:
 			((currentPointer->variable)->tab[value_cursor])++;
+			if(value_cursor==0){//godzina
+				if((currentPointer->variable)->tab[value_cursor]>=24)(currentPointer->variable)->tab[value_cursor]=0;
+			}else{//minuta
+				if((currentPointer->variable)->tab[value_cursor]>=60)(currentPointer->variable)->tab[value_cursor]=0;
+			}
 			break;
 		case _RTC_Date:
-			((currentPointer->variable)->tab[value_cursor])++;
+			(currentPointer->variable)->tab[value_cursor]++;
+			uint8_t *temp_tab=(currentPointer->variable)->tab;
+
+			if(value_cursor==0){		//dzień
+				switch (temp_tab[1]) {
+					case 2:		//28 lub 29 dni
+						if(temp_tab[2]%4){	//rok nieprzestępny
+							if(temp_tab[value_cursor]>28)temp_tab[value_cursor]=1;
+						}else{	//rok przestępny
+							if(temp_tab[value_cursor]>29)temp_tab[value_cursor]=1;
+						}
+						break;
+					case 4:
+					case 6:
+					case 9:
+					case 11:	//30 dni
+						if(temp_tab[value_cursor]>30)temp_tab[value_cursor]=1;
+						break;
+					default:	//31 dni
+						if(temp_tab[value_cursor]>31)temp_tab[value_cursor]=1;
+						break;
+				}
+			}if(value_cursor==1){		//miesiąc
+				if(temp_tab[value_cursor]>12)temp_tab[value_cursor]=1;
+			}else{						//rok
+				if(temp_tab[value_cursor]>99)temp_tab[value_cursor]=0;
+			}
+
 			break;
 		case _Color_RGB:
 			switch(value_cursor){
@@ -242,6 +356,9 @@ void value_change(void){
 
 	if((currentPointer->parent)==&menu_1_1/*Tryb Ledów*/&&currentPointer->variable->type==_select){
 		currentPointer->variable->byte=menu_get_index(currentPointer);
+		if(currentPointer->variable->byte==3)dzien_noc_flag.byte=1;
+		else dzien_noc_flag.byte=0;
+
 		value_save();
 	}
 	if(((currentPointer->variable)->type)==_bool){
@@ -249,6 +366,10 @@ void value_change(void){
 			(currentPointer->variable)->byte=0;
 		}else{
 			(currentPointer->variable)->byte=1;
+		}
+
+		if(currentPointer->variable==&dzien_noc_flag){
+			trybLed_var.byte=3;
 		}
 		value_save();
 	}
@@ -259,10 +380,8 @@ void value_change(void){
 union Code_t{
 	uint32_t uint;
 	uint8_t tab[4];
-};
-union Code_t CODE={0x01020304};
-union Code_t SECRET_CODE={0x01000000};
-
+};// 					 0x-3-2-1-0
+union Code_t CODE=		{0x00000000};
 uint8_t code_cursor=3;
 
 void code_increase(void){
@@ -280,12 +399,14 @@ void enter_secret_menu(void){
 	key_left_func=temp_key_left_func;
 	key_right_func=temp_key_right_func;
 	refresh_func=temp_refresh_func;
-	if(CODE.uint==SECRET_CODE.uint){
 
-		snake_play();
-
+	switch (CODE.uint) {
+		case 0x01020304: //SNAKE PLAY
+			snake_play();
+			break;
+		default:
+			break;
 	}
-
 }
 void code_cursor_right(void){
 	if(code_cursor>0)code_cursor--;
@@ -312,6 +433,16 @@ void code_menu_refresh(void){
 		}
 	}
 	GFX_SetFont(tempFont);
+}
+
+void refresh_dateTime(void){
+	data_var.tab[0]=RtcDate.Date;
+	data_var.tab[1]=RtcDate.Month;
+	data_var.tab[2]=RtcDate.Year;
+
+	godzina_var.tab[0]=RtcTime.Hours;
+	godzina_var.tab[1]=RtcTime.Minutes;
+
 }
 
 void code_menu(void){

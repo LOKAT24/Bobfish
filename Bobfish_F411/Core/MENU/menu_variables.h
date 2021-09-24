@@ -56,7 +56,9 @@ extern menu_variable_t build_date;
 extern menu_variable_t build_time;
 extern menu_variable_t change_time_flag;
 extern menu_variable_t displayContrast;
-
+extern menu_variable_t czas_rano;
+extern menu_variable_t czas_wieczor;
+extern menu_variable_t dzien_noc_flag;
 
 
 

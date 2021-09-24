@@ -14,6 +14,7 @@
 #include "stm32f4xx.h"
 #include "i2c.h"
 #include "wchar.h"
+#include "rtc.h"
 
 
 #include "../SSD_1306_lib/GFX_BW.h"
