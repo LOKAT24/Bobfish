@@ -76,7 +76,7 @@ void ws2812b_init(TIM_HandleTypeDef *htim, uint32_t Channel) {
 		}
 	}
 	//START DMA
-	HAL_TIM_PWM_Start_DMA(htim, Channel,buffor, buffor_size);
+	HAL_TIM_PWM_Start_DMA(htim, Channel,buffor,buffor_size);
 }
 
 void ws2812b_refresh(void) {

@@ -1,0 +1,12 @@
+Wybór koloru w 3 wariantach : RGB, HSV, TEMP(KELVIN)
+-Kolor Dzień
+-Kolor Dzień2
+-Kolor Noc
+-Kolor Noc2
+
+Wybór trybu koloru w dzień i w nocy :
+-static
+-efekt:fale,mryganie
+-dodatkowy kolor do efektu 
+
+Algorytm dzień/noc

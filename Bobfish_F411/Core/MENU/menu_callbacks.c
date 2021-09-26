@@ -103,6 +103,7 @@ void value_save(void){
 	  HAL_RTC_SetTime(&hrtc,&teraz , RTC_FORMAT_BIN);
 
 	}
+	menu_variables_save_eeprom();
 	menu_refresh();
 }
 

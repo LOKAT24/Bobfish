@@ -27,12 +27,14 @@ menu_variable_t displayContrast={.type=_byte, .byte=1};
 menu_variable_t czas_rano={ .type=_RTC_Time, .tab={6,0}};
 menu_variable_t czas_wieczor={ .type=_RTC_Time, .tab={18,0}};
 menu_variable_t dzien_noc_flag={ .type=_bool, .byte=0};
+menu_variable_t eeprom_firstInit={ .type=_uint, .uint32=0xabababab};
 
 
 menu_variable_t build_date={ .type=_string, .string=build_date_wstring};
 menu_variable_t build_time={ .type=_string, .string=build_time_wstring};
 
 menu_variable_t *eeprom_variables[]={
+		&eeprom_firstInit,
 		&godzina_var,
 		&data_var,
 		&buzzer_state,
@@ -58,6 +60,7 @@ void menu_variables_read_eeprom(void){
 
 
 void menu_variables_init(void){
+
 	uint8_t i;
 	if(trybLed_var.byte==3)dzien_noc_flag.byte=1;
 	else dzien_noc_flag.byte=0;
@@ -76,4 +79,15 @@ void menu_variables_init(void){
 	data_var.tab[0]=RtcDate.Date;
 	data_var.tab[1]=RtcDate.Month;
 	data_var.tab[2]=RtcDate.Year;
+
+
+	uint8_t data[4];
+	ee_read(0, 4, data);
+
+	if(!(data[0]==0xab&&data[1]==0xab&&data[2]==0xab&&data[3]==0xab)){ //pierwsze wgranie programu
+		menu_variables_save_eeprom();
+	}else{
+		menu_variables_read_eeprom();
+	}
+
 }
