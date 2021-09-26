@@ -33,8 +33,8 @@
 #include "../MENU/menu.h"
 #include "../BITMAPS/bitmaps.h"
 #include "keyb.h"
+#include "../EE_lib/ee.h"
 
-//adc 29761,9Hz | timer
 
 /* USER CODE END Includes */
 
@@ -171,6 +171,18 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  //ee_init();
+
+ // uint8_t fails=0;
+ // fails=menu_variables_save_eeprom();
+ // uint8_t data[32];
+  //fails=fails+ee_read(4, 32, data);
+//	for(int i=0;i<8;i++){
+//		fails=fails+ee_read(i*4, 4, &data[i*4]);
+//		HAL_Delay(1);
+//	}
+
+
 
   menu_init(&hi2c1);
 

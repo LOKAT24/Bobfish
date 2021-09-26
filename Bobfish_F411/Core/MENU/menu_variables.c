@@ -32,6 +32,30 @@ menu_variable_t dzien_noc_flag={ .type=_bool, .byte=0};
 menu_variable_t build_date={ .type=_string, .string=build_date_wstring};
 menu_variable_t build_time={ .type=_string, .string=build_time_wstring};
 
+menu_variable_t *eeprom_variables[]={
+		&godzina_var,
+		&data_var,
+		&buzzer_state,
+		&trybLed_var,
+		&displayContrast,
+		&czas_rano,
+		&czas_wieczor,
+		&dzien_noc_flag
+};
+
+uint8_t menu_variables_save_eeprom(void){
+	uint8_t fails=0;
+	for(int i=0;i<sizeof(eeprom_variables)/sizeof(eeprom_variables[0]);i++){
+		fails=fails+ee_write(i*4, 4, eeprom_variables[i]->tab);
+	}
+	return fails;
+}
+void menu_variables_read_eeprom(void){
+	for(int i=0;i<sizeof(eeprom_variables)/sizeof(eeprom_variables[0]);i++){
+		ee_read(i*4, 4, eeprom_variables[i]->tab);
+	}
+}
+
 
 void menu_variables_init(void){
 	uint8_t i;

@@ -22,6 +22,7 @@
 #include "../WS_2812B_TIMER/ws2812b_tim.h"
 #include "../MENU/menu_callbacks.h"
 #include "../MENU/menu_variables.h"
+#include "../EE_lib/ee.h"
 
 #include "keyb.h"
 

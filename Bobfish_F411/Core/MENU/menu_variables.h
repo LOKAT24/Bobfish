@@ -63,5 +63,6 @@ extern menu_variable_t dzien_noc_flag;
 
 
 void menu_variables_init(void);
+uint8_t menu_variables_save_eeprom(void);
 
 #endif /* MENU_MENU_VARIABLES_H_ */
