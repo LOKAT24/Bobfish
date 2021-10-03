@@ -8,23 +8,31 @@
 #ifndef MENU_MENU_VARIABLES_H_
 #define MENU_MENU_VARIABLES_H_
 
-//#include "stdio.h"
-//#include "stdlib.h"
-//#include "../WS2812B/ws2812b.h"
-#include "public_include.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_gpio.h"
+#include "math.h"
 
-//#include "../WS2812B/ws2812b_fx.h"
+enum{_ColorRGB,_ColorHSV,_ColorTemp};
 
-enum { _bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _Color_RGB, _Color_HSV, _string, _select};
-
-typedef struct{
+typedef struct colorHSV{
 	uint16_t h;
 	uint8_t s;
 	uint8_t v;
-}ws2812b_color_hsv;
-typedef struct ws2812b_color {
-	uint8_t red, green, blue;
-} ws2812b_color;
+}colorHSV;
+
+typedef struct colorRGB {
+	uint8_t r, g, b;
+} colorRGB;
+
+typedef struct allColor_t {
+	uint8_t type;
+	colorRGB rgb;
+	colorHSV hsv;
+	uint16_t temp;
+} allColor_t;
+#include "public_include.h"
+
+enum { _bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _string, _select, _color};
 
 typedef struct{
 	uint8_t type;
@@ -35,21 +43,13 @@ typedef struct{
 		uint32_t uint32;
 		uint8_t tab[4];
 		uint8_t byte;
-		ws2812b_color color_rgb;
-		ws2812b_color_hsv color_hsv;
+		allColor_t* color;
 	};
 }menu_variable_t;
 
-//wchar_t* build_date_string;
-//wchar_t* build_time_string;
 
 extern menu_variable_t godzina_var;
 extern menu_variable_t buzzer_state;
-extern menu_variable_t customEfekt_numer;
-extern menu_variable_t customEfekt_color1;
-extern menu_variable_t customEfekt_color2;
-extern menu_variable_t customEfekt_color3;
-extern menu_variable_t customEfekt_speed;
 extern menu_variable_t trybLed_var;
 extern menu_variable_t data_var;
 extern menu_variable_t build_date;
@@ -59,6 +59,7 @@ extern menu_variable_t displayContrast;
 extern menu_variable_t czas_rano;
 extern menu_variable_t czas_wieczor;
 extern menu_variable_t dzien_noc_flag;
+extern menu_variable_t kolorDzien_var;
 
 
 

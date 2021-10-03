@@ -41,6 +41,7 @@ enum { ROT_RIGHT, ROT_UP, ROT_LEFT, ROT_DOWN ,};
 
 
 uint8_t snake_dir=DIR_RIGHT;
+uint8_t game_over=0;
 uint16_t snake_length=3;
 snake_part* snake_tab;
 snake_part point_part={ .x=GAME_WIDTH-1, .y=GAME_HEIGHT-1, .image=snake_point_image, .rotation=0};
@@ -56,6 +57,7 @@ void snake_part_set(uint16_t id, int8_t _x, int8_t _y, const tImage**  _image, u
 }
 
 void snake_init(void){
+	game_over=0;
 	snake_length=4;
 	snake_dir=DIR_RIGHT;
 	snake_tab=malloc(snake_length*sizeof(*snake_tab));
@@ -149,6 +151,7 @@ void snake_core(void){
 
 		for(int id=1;id<snake_length;id++){
 			if(snake_tab[0].x==snake_tab[id].x&&snake_tab[0].y==snake_tab[id].y){
+				game_over=1;
 				snake_exit();
 			}
 		}
@@ -225,7 +228,7 @@ uint8_t exit_cursor=0;
 void snake_exit_question_menu(void);
 
 void snake_exit(void){
-	if(exit_cursor==1){
+	if(exit_cursor==1||game_over==1){
 		free(snake_tab);
 
 		key_down_func=temp_key_down_func;

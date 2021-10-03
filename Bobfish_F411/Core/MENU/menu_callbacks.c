@@ -9,8 +9,6 @@
 //#include <arm_math.h>
 
 #include "menu.h"
-#include "../WS2812B/ws2812b_fx.h"
-#include "../WS2812B/ws2812b.h"
 #include "public_include.h"
 
 
@@ -34,13 +32,15 @@ uint8_t value_cursor=0;
 void value_change_refresh(void){
 	menu_refresh();
 	if(currentPointer->variable->type==_RTC_Time){
+		GFX_DrawFillRoundRectangle(7, 7, 113, 49, 8, BLACK);
+		GFX_DrawRoundRectangle(7, 7, 113, 49, 8, WHITE);
 		GFX_DrawFillRoundRectangle(10, 10, 107, 43, 5, WHITE);
-		wchar_t *str[20];
+		wchar_t str[20];
 		swprintf(str,sizeof(str),L"%ls",currentPointer->name);
 		uint8_t x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str)/2;
 		GFX_DrawString(x_pos, 13, str, BLACK, WHITE);
-		wchar_t *str_g[3];
-		wchar_t *str_m[3];
+		wchar_t str_g[3];
+		wchar_t str_m[3];
 		swprintf(str_g,sizeof(str_g),L"%02d",(currentPointer->variable)->tab[0]);
 		swprintf(str_m,sizeof(str_m),L"%02d",(currentPointer->variable)->tab[1]);
 		//swprintf(str,sizeof(str),L"%ls:%ls",(RtcTime.SubSeconds%127>90)&&value_cursor==0?L"   ":str_g,(RtcTime.SubSeconds%127>90)&&value_cursor==1?L"   ":str_m);
@@ -54,6 +54,39 @@ void value_change_refresh(void){
 			GFX_DrawString(dot_x_pos+GFX_GetStringWidth(L":"),  15+GFX_GetFontHeight(), str_m, BLACK, WHITE);
 
 	}
+	if(currentPointer->variable->type==_RTC_Date){
+			GFX_DrawFillRoundRectangle(7, 7, 113, 49, 8, BLACK);
+			GFX_DrawRoundRectangle(7, 7, 113, 49, 8, WHITE);
+			GFX_DrawFillRoundRectangle(10, 10, 107, 43, 5, WHITE);
+			//GFX_DrawFillRoundRectangle(10, 10, 107, 43, 5, WHITE);
+			wchar_t str[20];
+			swprintf(str,sizeof(str),L"%ls",currentPointer->name);
+			uint8_t x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str)/2;
+			GFX_DrawString(x_pos, 13, str, BLACK, WHITE);
+			wchar_t str_d[3];
+			wchar_t str_m[3];
+			wchar_t str_r[3];
+			swprintf(str_d,sizeof(str_d),L"%02d",(currentPointer->variable)->tab[0]);
+			swprintf(str_m,sizeof(str_m),L"%02d",(currentPointer->variable)->tab[1]);
+			swprintf(str_r,sizeof(str_r),L"%02d",(currentPointer->variable)->tab[2]);
+
+			swprintf(str,sizeof(str),L"%ls/%ls/%ls",(RtcTime.SubSeconds%127>90)&&value_cursor==0?L"___":str_d,(RtcTime.SubSeconds%127>90)&&value_cursor==1?L"___":str_m,(RtcTime.SubSeconds%127>90)&&value_cursor==2?L"___":str_r);
+			x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str)/2;
+			GFX_DrawString(x_pos, 15+GFX_GetFontHeight(), str, BLACK, WHITE);
+
+			/*
+			uint8_t dot_x_pos=SSD1306_LCDWIDTH/3-GFX_GetStringWidth(L"/")/3;
+			GFX_DrawString(dot_x_pos,  15+GFX_GetFontHeight(), L"/", BLACK, WHITE);
+			if(!((RtcTime.SubSeconds%127>90)&&value_cursor==0))
+				GFX_DrawString(dot_x_pos-GFX_GetStringWidth(str_d),  15+GFX_GetFontHeight(), str_d, BLACK, WHITE);
+			if(!((RtcTime.SubSeconds%127>90)&&value_cursor==1))
+				GFX_DrawString(dot_x_pos+GFX_GetStringWidth(L"/"),  15+GFX_GetFontHeight(), str_m, BLACK, WHITE);
+			if(!((RtcTime.SubSeconds%127>90)&&value_cursor==1))
+				GFX_DrawString(dot_x_pos+GFX_GetStringWidth(L"/"),  15+GFX_GetFontHeight(), str_r, BLACK, WHITE);
+				*/
+
+
+		}
 
 
 
@@ -69,17 +102,7 @@ void value_save(void){
 	refresh_func=temp_refresh_func;
 	menu_variable_t *ptr=currentPointer->variable;
 
-	if(ptr==&customEfekt_color1||ptr==&customEfekt_color2||ptr==&customEfekt_color3){
-		//WS2812BFX_SetColorHSV(0, customEfekt_color1.color_hsv.h, customEfekt_color1.color_hsv.s, customEfekt_color1.color_hsv.v);
-		//WS2812BFX_SetColorHSV(1, customEfekt_color2.color_hsv.h, customEfekt_color2.color_hsv.s, customEfekt_color2.color_hsv.v);
-		//WS2812BFX_SetColorHSV(2, customEfekt_color3.color_hsv.h, customEfekt_color3.color_hsv.s, customEfekt_color3.color_hsv.v);
-		//WS2812BFX_SetMode(0, customEfekt_numer.byte);
-		//WS2812BFX_Start(0);
-	}
-	if(ptr==&customEfekt_numer){
 
-		//WS2812BFX_Start(0);
-	}
 
 	if(ptr==&godzina_var||ptr==&data_var){
 
@@ -103,7 +126,7 @@ void value_save(void){
 	  HAL_RTC_SetTime(&hrtc,&teraz , RTC_FORMAT_BIN);
 
 	}
-	menu_variables_save_eeprom();
+	//menu_variables_save_eeprom();
 	menu_refresh();
 }
 
@@ -119,11 +142,7 @@ void value_decrease(void){
 		switch((currentPointer->variable)->type){		//_bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _Color_RGB, _Color_HSV, _string
 		case _byte:
 			((currentPointer->variable)->byte)--;
-			if(currentPointer->variable==&customEfekt_numer){
-				//WS2812BFX_PrevMode(0);
-				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=57;
-				//WS2812BFX_SetMode(0, (currentPointer->variable)->byte);
-			}
+
 			if(currentPointer->variable==&displayContrast){
 				if((currentPointer->variable)->byte<1)(currentPointer->variable)->byte=1;
 				contrast_refresh();
@@ -179,33 +198,7 @@ void value_decrease(void){
 				if(temp_tab[value_cursor]>250)temp_tab[value_cursor]=99;
 			}
 			break;
-		case _Color_RGB:
-			switch(value_cursor){
-			case 0:
-				((currentPointer->variable)->color_rgb.red)++;
-				break;
-			case 1:
-				((currentPointer->variable)->color_rgb.green)++;
-				break;
-			case 2:
-				((currentPointer->variable)->color_rgb.blue)++;
-				break;
-			}
-			break;
-		case _Color_HSV:
-			switch(value_cursor){
-			case 0:
-				((currentPointer->variable)->color_hsv.h)--;
-				if((currentPointer->variable)->color_hsv.h>359)(currentPointer->variable)->color_hsv.h=359;
-				break;
-			case 1:
-				((currentPointer->variable)->color_hsv.s)--;
-				break;
-			case 2:
-				((currentPointer->variable)->color_hsv.v)--;
-				break;
-			}
-			break;
+
 		case _string:
 			//swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
 			break;
@@ -221,9 +214,7 @@ void value_increase(void){
 		case _byte:
 
 			((currentPointer->variable)->byte)++;
-			if(currentPointer->variable==&customEfekt_numer){
-				if((currentPointer->variable)->byte>57)(currentPointer->variable)->byte=0;
-			}
+
 			if(currentPointer->variable==&displayContrast){
 				if((currentPointer->variable)->byte>100)(currentPointer->variable)->byte=100;
 				contrast_refresh();
@@ -277,33 +268,7 @@ void value_increase(void){
 			}
 
 			break;
-		case _Color_RGB:
-			switch(value_cursor){
-			case 0:
-				((currentPointer->variable)->color_rgb.red)++;
-				break;
-			case 1:
-				((currentPointer->variable)->color_rgb.green)++;
-				break;
-			case 2:
-				((currentPointer->variable)->color_rgb.blue)++;
-				break;
-			}
-			break;
-		case _Color_HSV:
-			switch(value_cursor){
-			case 0:
-				((currentPointer->variable)->color_hsv.h)++;
-				if((currentPointer->variable)->color_hsv.h>359)(currentPointer->variable)->color_hsv.h=0;
-				break;
-			case 1:
-				((currentPointer->variable)->color_hsv.s)++;
-				break;
-			case 2:
-				((currentPointer->variable)->color_hsv.v)++;
-				break;
-			}
-			break;
+
 		case _string:
 			//swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
 			break;
@@ -318,7 +283,7 @@ void cursor_left(void){
 		if(value_cursor==0)value_cursor=1;
 		else value_cursor--;
 	}
-	if(currentType==_Color_HSV||currentType==_Color_RGB||currentType==_RTC_Date){
+	if(currentType==_RTC_Date){
 		if(value_cursor==0)value_cursor=2;
 		else value_cursor--;
 	}
@@ -330,7 +295,7 @@ void cursor_right(void){
 		if(value_cursor==1)value_cursor=0;
 		else value_cursor++;
 	}
-	if(currentType==_Color_HSV||currentType==_Color_RGB||currentType==_RTC_Date){
+	if(currentType==_RTC_Date){
 		if(value_cursor==2)value_cursor=0;
 		else value_cursor++;
 	}
@@ -464,4 +429,175 @@ void code_menu(void){
 	CODE.uint=0x00000000;
 	code_cursor=3;
 }
+
+/****************************************************************************************************************************************
+															Kolor change:
+***************************************************************************************************************************************/
+
+uint8_t color_cursorH=0;
+uint8_t color_cursorH_max=0;
+uint8_t color_cursorV=0;
+const uint8_t color_cursorV_max=3;
+
+enum{NONE,RGB,HSV,TEMP};
+uint8_t color_change_mode=NONE;//0-NONE, 1-RGB, 2-HSV, 3-TEMP
+
+void color_change_exit(void){
+	key_down_func=temp_key_down_func;
+	key_up_func=temp_key_up_func;
+	key_enter_func=temp_key_enter_func;
+	key_left_func=temp_key_left_func;
+	key_right_func=temp_key_right_func;
+	refresh_func=temp_refresh_func;
+}
+
+void color_up(void){
+	allColor_t *temp_color=currentPointer->variable->color;
+
+	switch(color_change_mode){
+	case NONE:
+		if(color_cursorV==0)color_cursorV=color_cursorV_max;
+		else color_cursorV--;
+		break;
+	case RGB:
+		switch(color_cursorH){
+		case 0:
+			temp_color->rgb.r++;
+			break;
+		case 1:
+			temp_color->rgb.g++;
+			break;
+		case 2:
+			temp_color->rgb.b++;
+			break;
+		}
+		RgbToHsv(temp_color);
+		break;
+	case HSV:
+		switch(color_cursorH){
+		case 0:
+			temp_color->hsv.h++;
+			break;
+		case 1:
+			temp_color->hsv.s++;
+			break;
+		case 2:
+			temp_color->hsv.v++;
+			break;
+		}
+		break;
+	case TEMP:
+		temp_color->temp+=100;
+		break;
+
+
+	}
+}
+void color_down(void){
+	allColor_t *temp_color=currentPointer->variable->color;
+
+	switch(color_change_mode){
+	case NONE:
+		if(color_cursorV==color_cursorV_max)color_cursorV=0;
+		else color_cursorV++;
+		break;
+	case RGB:
+		switch(color_cursorH){
+		case 0:
+			temp_color->rgb.r--;
+			break;
+		case 1:
+			temp_color->rgb.g--;
+			break;
+		case 2:
+			temp_color->rgb.b--;
+			break;
+		}
+		RgbToHsv(temp_color);
+		break;
+	case HSV:
+		switch(color_cursorH){
+		case 0:
+			temp_color->hsv.h--;
+			break;
+		case 1:
+			temp_color->hsv.s--;
+			break;
+		case 2:
+			temp_color->hsv.v--;
+			break;
+		}
+		break;
+	case TEMP:
+		temp_color->temp-=100;
+		break;
+	}
+}
+void color_enter(void){
+	allColor_t *temp_color=currentPointer->variable->color;
+
+	if(color_change_mode==NONE){
+		color_cursorH_max=2;
+		switch(color_cursorV){
+		case 0://RGB
+			color_cursorH_max=2;
+			color_change_mode=RGB;
+			temp_color->type=_ColorRGB;
+			break;
+		case 1://HSV
+			color_cursorH_max=2;
+			color_change_mode=HSV;
+			temp_color->type=_ColorHSV;
+			break;
+		case 2://TEMPERATURE
+			color_cursorH_max=0;
+			color_change_mode=TEMP;
+			temp_color->type=_ColorTemp;
+			break;
+		case 3://SAVE
+			color_cursorH=0;
+			color_cursorH_max=0;
+			color_change_exit();
+			break;
+
+		}
+	}else{
+		color_cursorH=0;
+		color_cursorH_max=0;
+		color_change_mode=NONE;
+	}
+
+}
+void color_left(void){
+	if(color_cursorH==0)color_cursorH=color_cursorH_max;
+	else color_cursorH--;
+}
+void color_right(void){
+	if(color_cursorH==color_cursorH_max)color_cursorH=0;
+	else color_cursorH++;
+}
+void color_refresh(void){
+ //TODO
+}
+
+void color_change(void){
+	color_cursorH=0;
+	color_cursorV=0;
+
+	temp_key_down_func=key_down_func;
+	temp_key_up_func=key_up_func;
+	temp_key_enter_func=key_enter_func;
+	temp_key_left_func=key_left_func;
+	temp_key_right_func=key_right_func;
+	temp_refresh_func=refresh_func;
+
+
+	key_up_func=color_up;
+	key_down_func=color_down;
+	key_enter_func=color_enter;
+	key_left_func=color_left;
+	key_right_func=color_right;
+	refresh_func=color_refresh;
+}
+
 

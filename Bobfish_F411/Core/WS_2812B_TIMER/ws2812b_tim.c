@@ -179,3 +179,155 @@ void ws2812b_setKelvin(uint8_t ledId, int kelvin, uint8_t Gamma){
 
 
 }
+
+void color_update(allColor_t color){
+
+}
+
+void RgbToHsv(allColor_t *color)
+{
+
+    unsigned char rgbMin, rgbMax;
+
+    rgbMin = color->rgb.r < color->rgb.g ? (color->rgb.r < color->rgb.b ? color->rgb.r : color->rgb.b) : (color->rgb.g < color->rgb.b ? color->rgb.g : color->rgb.b);
+    rgbMax = color->rgb.r > color->rgb.g ? (color->rgb.r > color->rgb.b ? color->rgb.r : color->rgb.b) : (color->rgb.g > color->rgb.b ? color->rgb.g : color->rgb.b);
+
+    color->hsv.v = rgbMax;
+    if (color->hsv.v == 0)
+    {
+        color->hsv.h = 0;
+        color->hsv.s = 0;
+        return;
+    }
+
+    color->hsv.s = 255 * (int)(rgbMax - rgbMin) / color->hsv.v;
+    if (color->hsv.s == 0)
+    {
+        color->hsv.h = 0;
+        return;
+    }
+
+    if (rgbMax == color->rgb.r)
+        color->hsv.h = 0 + 60 * (color->rgb.g - color->rgb.b) / (rgbMax - rgbMin);
+    else if (rgbMax == color->rgb.g)
+        color->hsv.h = 120 + 60 * (color->rgb.b - color->rgb.r) / (rgbMax - rgbMin);
+    else
+        color->hsv.h = 240 + 60 * (color->rgb.r - color->rgb.g) / (rgbMax - rgbMin);
+
+    if(color->hsv.h>360)color->hsv.h+=360;
+}
+
+
+
+void HsvToRgb(allColor_t *color)
+{
+    unsigned char region, remainder, p, q, t;
+
+    if (color->hsv.s == 0)
+    {
+    	color->rgb.r = color->hsv.v;
+    	color->rgb.g = color->hsv.v;
+    	color->rgb.b = color->hsv.v;
+        return;
+    }
+
+    region = color->hsv.h / 60;
+    remainder = (color->hsv.h - (region * 60)) * 6;
+
+    p = (color->hsv.v * (255 - color->hsv.s)) >> 8;
+    q = (color->hsv.v * (255 - ((color->hsv.s * remainder) >> 8))) >> 8;
+    t = (color->hsv.v * (255 - ((color->hsv.s * (255 - remainder)) >> 8))) >> 8;
+
+    switch (region)
+    {
+        case 0:
+        	color->rgb.r = color->hsv.v; color->rgb.g = t; color->rgb.b = p;
+            break;
+        case 1:
+        	color->rgb.r = q; color->rgb.g = color->hsv.v; color->rgb.b = p;
+            break;
+        case 2:
+        	color->rgb.r = p; color->rgb.g = color->hsv.v; color->rgb.b = t;
+            break;
+        case 3:
+        	color->rgb.r = p; color->rgb.g = q; color->rgb.b = color->hsv.v;
+            break;
+        case 4:
+        	color->rgb.r = t; color->rgb.g = p; color->rgb.b = color->hsv.v;
+            break;
+        default:
+        	color->rgb.r = color->hsv.v; color->rgb.g = p; color->rgb.b = q;
+            break;
+    }
+
+}
+void HsvToRgb2(allColor_t *color) {
+	/* convert hue, saturation and brightness ( HSB/HSV ) to RGB
+	 The dim_curve is used only on brightness/value and on saturation (inverted).
+	 This looks the most natural.
+	 */
+
+	//val = dim_curve[val];
+	//sat = 255 - dim_curve[255 - sat];
+
+	int r;
+	int g;
+	int b;
+	int base;
+
+	if (color->hsv.s == 0) { // Acromatic color (gray). Hue doesn't mind.
+		//LEDS[ledId] = color->hsv.v + (color->hsv.v << 8) + (color->hsv.v << 16);
+		color->rgb.r=color->hsv.v;
+		color->rgb.g=color->hsv.v;
+		color->rgb.b=color->hsv.v;
+
+	} else {
+
+		base = ((255 - color->hsv.s) * color->hsv.v) >> 8;
+
+		switch (color->hsv.h / 60) {
+		case 0:
+			r = color->hsv.v;
+			g = (((color->hsv.v - base) * color->hsv.h) / 60) + base;
+			b = base;
+			break;
+
+		case 1:
+			r = (((color->hsv.v - base) * (60 - (color->hsv.h % 60))) / 60) + base;
+			g = color->hsv.v;
+			b = base;
+			break;
+
+		case 2:
+			r = base;
+			g = color->hsv.v;
+			b = (((color->hsv.v - base) * (color->hsv.h % 60)) / 60) + base;
+			break;
+
+		case 3:
+			r = base;
+			g = (((color->hsv.v - base) * (60 - (color->hsv.h % 60))) / 60) + base;
+			b = color->hsv.v;
+			break;
+
+		case 4:
+			r = (((color->hsv.v - base) * (color->hsv.h % 60)) / 60) + base;
+			g = base;
+			b = color->hsv.v;
+			break;
+
+		case 5:
+			r = color->hsv.v;
+			g = base;
+			b = (((color->hsv.v - base) * (60 - (color->hsv.h % 60))) / 60) + base;
+			break;
+		}
+
+		//LEDS[ledId] = b + (r << 8) + (g << 16);
+		color->rgb.r=r;
+		color->rgb.g=g;
+		color->rgb.b=b;
+
+	}
+}
+

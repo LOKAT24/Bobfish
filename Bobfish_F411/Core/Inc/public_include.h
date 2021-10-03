@@ -15,13 +15,17 @@
 #include "i2c.h"
 #include "wchar.h"
 #include "rtc.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_gpio.h"
+#include "math.h"
 
 
 #include "../SSD_1306_lib/GFX_BW.h"
 #include "../SSD_1306_lib/OLED_SSD1306.h"
+
+#include "../MENU/menu_variables.h"
 #include "../WS_2812B_TIMER/ws2812b_tim.h"
 #include "../MENU/menu_callbacks.h"
-#include "../MENU/menu_variables.h"
 #include "../EE_lib/ee.h"
 
 #include "keyb.h"

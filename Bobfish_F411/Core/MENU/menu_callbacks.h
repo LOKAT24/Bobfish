@@ -13,5 +13,6 @@ void value_change(void);
 void showADC(void);
 void code_menu(void);
 void refresh_dateTime(void);
+void color_change(void);
 
 #endif /* MENU_MENU_CALLBACKS_H_ */

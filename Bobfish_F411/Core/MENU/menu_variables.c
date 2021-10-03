@@ -13,14 +13,11 @@ char build_date_string[15]=__DATE__;
 wchar_t build_time_wstring[10];
 wchar_t build_date_wstring[15];
 
+allColor_t kolorDzien={.type=_ColorRGB,.rgb={.r=255,.g=0,.b=0},.hsv={.h=0,.s=0,.v=0},.temp=0};
+
 menu_variable_t godzina_var={ .type=_RTC_Time, .tab={16,20}};
 menu_variable_t data_var={ .type=_RTC_Date, .tab={9,4,20}};
 menu_variable_t buzzer_state={ .type=_bool, .byte=1};
-menu_variable_t customEfekt_numer={ .type=_byte, .byte=2};
-menu_variable_t customEfekt_color1={ .type=_Color_HSV, .color_hsv={ .h=0, .s=255, .v=100}};
-menu_variable_t customEfekt_color2={ .type=_Color_HSV, .color_hsv={ .h=120, .s=255, .v=0}};
-menu_variable_t customEfekt_color3={ .type=_Color_HSV, .color_hsv={ .h=240, .s=255, .v=0}};
-menu_variable_t customEfekt_speed={ .type=_uint, .uint32=50};
 menu_variable_t change_time_flag={ .type=_bool, .byte=0};
 menu_variable_t trybLed_var={ .type=_select, .byte=0};
 menu_variable_t displayContrast={.type=_byte, .byte=1};
@@ -28,6 +25,11 @@ menu_variable_t czas_rano={ .type=_RTC_Time, .tab={6,0}};
 menu_variable_t czas_wieczor={ .type=_RTC_Time, .tab={18,0}};
 menu_variable_t dzien_noc_flag={ .type=_bool, .byte=0};
 menu_variable_t eeprom_firstInit={ .type=_uint, .uint32=0xabababab};
+menu_variable_t kolorDzien_var={ .type=_color, .color=&kolorDzien};
+
+
+
+
 
 
 menu_variable_t build_date={ .type=_string, .string=build_date_wstring};

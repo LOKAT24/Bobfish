@@ -30,7 +30,7 @@
 
 typedef struct menu_struct menu_t;
 struct menu_struct{
-	const wchar_t* name;
+	/*const */wchar_t* name;
 	menu_t* next;
 	menu_t* prev;
 	menu_t* child;

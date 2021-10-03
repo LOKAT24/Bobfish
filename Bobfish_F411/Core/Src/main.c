@@ -24,7 +24,6 @@
 #include "rtc.h"
 #include "spi.h"
 #include "tim.h"
-#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -58,6 +57,7 @@
 RTC_TimeTypeDef RtcTime;
 RTC_DateTypeDef RtcDate;
 uint8_t KEY_STATE;
+uint32_t test_val;
 
 
 /* USER CODE END PV */
@@ -166,19 +166,18 @@ int main(void)
   MX_DMA_Init();
   MX_I2C1_Init();
   MX_RTC_Init();
-  MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  ee_init();
-  //menu_variables_save_eeprom();
-
-  uint8_t data[32];
-  //ee_read(4, 32, data);
-	for(int i=0;i<8;i++){
-		ee_read(i*4, 4, &data[i*4]);
-	}
+//  ee_init();
+//  //menu_variables_save_eeprom();
+//
+//  uint8_t data[32];
+//  //ee_read(4, 32, data);
+//	for(int i=0;i<8;i++){
+//		ee_read(i*4, 4, &data[i*4]);
+//	}
 
 
 
@@ -193,6 +192,7 @@ int main(void)
 
   menu_refresh();
 
+  test_val=sizeof(float);
 
 
   /* USER CODE END 2 */
@@ -203,6 +203,8 @@ int main(void)
   {
 	ws2812b_setHSV(0, 0, 255, 255);
 	ws2812b_refresh();
+
+	//HsvToRgb(&kolorDzien);
 
 
 	if(IsKey(ANYKEY)&&buzzer_state.byte){

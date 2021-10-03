@@ -12,8 +12,8 @@
 menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran startowy
 	menu_t menu_1 = { L"* MENU *", NULL, NULL, &menu_1_1, NULL, NULL, NULL}; //menu głowne
 		menu_t menu_1_1 = { L"Tryb LED'ów", &menu_1_2, &menu_1_4, &menu_1_1_1, &menu_1, NULL, NULL}; //efekty
-			menu_t menu_1_1_1 = { L"Stały kolor 1", &menu_1_1_2, &menu_1_1_4, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 1
-			menu_t menu_1_1_2 = { L"Stały kolor 2", &menu_1_1_3, &menu_1_1_1, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 2
+			menu_t menu_1_1_1 = { L"Stały kolor D", &menu_1_1_2, &menu_1_1_4, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 1
+			menu_t menu_1_1_2 = { L"Stały kolor N", &menu_1_1_3, &menu_1_1_1, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały kolor 2
 			menu_t menu_1_1_3 = { L"Efekt", &menu_1_1_4, &menu_1_1_2, NULL, &menu_1_1, value_change, &trybLed_var}; //Stały efekt
 			menu_t menu_1_1_4 = { L"Dzień/noc", NULL, &menu_1_1_3, NULL, &menu_1_1, value_change, &trybLed_var}; //Dzień/noc
 		menu_t menu_1_2 = { L"Opcje", &menu_1_3, &menu_1_1, &menu_1_2_1, &menu_1, refresh_dateTime, NULL}; //OPCJE
@@ -25,11 +25,11 @@ menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran star
 			menu_t menu_1_2_5 = { L"Kontrast", &menu_1_2_6, &menu_1_2_4, NULL, &menu_1_2, value_change, &displayContrast}; //Kontrast ekranu
 			menu_t menu_1_2_6 = { L"Buzzer", &menu_1_2_7, &menu_1_2_5, NULL, &menu_1_2, value_change, &buzzer_state};
 			menu_t menu_1_2_7 = { L"Menu serwis", NULL, &menu_1_2_6, NULL, &menu_1_2, code_menu, NULL}; //Save(time/date)
-		menu_t menu_1_3 = { L"Kreator efektu", &menu_1_4, &menu_1_2, &menu_1_3_1, &menu_1, NULL, NULL}; //Kreator efektu
-			menu_t menu_1_3_1 = { L"Numer efektu", &menu_1_3_2, &menu_1_3_4, NULL, &menu_1_3, value_change, &customEfekt_numer}; //Numer efektu
-			menu_t menu_1_3_2 = { L"Kolor 1", &menu_1_3_3, &menu_1_3_1, NULL, &menu_1_3, value_change, &customEfekt_color1}; //Kolor 1
-			menu_t menu_1_3_3 = { L"Kolor 2", &menu_1_3_4, &menu_1_3_2, NULL, &menu_1_3, value_change, &customEfekt_color2}; //Kolor 2
-			menu_t menu_1_3_4 = { L"Szybkość", NULL, &menu_1_3_3, NULL, &menu_1_3, value_change, &customEfekt_speed}; //Szybkość efektu
+		menu_t menu_1_3 = { L"Wybór koloru", &menu_1_4, &menu_1_2, &menu_1_3_1, &menu_1, NULL, NULL}; //Kreator efektu
+			menu_t menu_1_3_1 = { L"Kolor Dzień", &menu_1_3_2, &menu_1_3_4, NULL, &menu_1_3, color_change, &kolorDzien_var}; //Numer efektu
+			menu_t menu_1_3_2 = { L"Kolor Dzień_2", &menu_1_3_3, &menu_1_3_1, NULL, &menu_1_3, value_change, NULL}; //Kolor 1
+			menu_t menu_1_3_3 = { L"Kolor Noc", &menu_1_3_4, &menu_1_3_2, NULL, &menu_1_3, value_change, NULL}; //Kolor 2
+			menu_t menu_1_3_4 = { L"Kolor Noc_2", NULL, &menu_1_3_3, NULL, &menu_1_3, value_change, NULL}; //Szybkość efektu
 		menu_t menu_1_4 = { L"Dzień/Noc", NULL, &menu_1_3, &menu_1_4_1, &menu_1, NULL, NULL};
 			menu_t menu_1_4_1 = { L"Praca", &menu_1_4_2, &menu_1_4_3, NULL, &menu_1_4, value_change, &dzien_noc_flag};
 			menu_t menu_1_4_2 = { L"Rano", &menu_1_4_3, &menu_1_4_1, NULL, &menu_1_4, value_change, &czas_rano};
@@ -101,18 +101,13 @@ void menu_refresh(void) {
 				case _RTC_Date:
 					swprintf(value,sizeof(value),L": %02d/%02d/%02d",(temp->variable)->tab[0],(temp->variable)->tab[1],(temp->variable)->tab[2]);
 					break;
-				case _Color_RGB:
-					swprintf(value,sizeof(value),L"R:%03d|G:%03d|B:%03d", ((temp->variable)->color_rgb).red, ((temp->variable)->color_rgb).green, ((temp->variable)->color_rgb).blue);
-					break;
-				case _Color_HSV:
-					swprintf(value,sizeof(value),L"H:%03d|S:%03d|V:%03d", ((temp->variable)->color_hsv).h, ((temp->variable)->color_hsv).s, ((temp->variable)->color_hsv).v);
-					break;
 				case _string:
 					swprintf(value,sizeof(value),L"%ls", (temp->variable)->string);
 					break;
 				case _select:
+					GFX_DrawRectangle(112, y_draw+1, 13, 13, WHITE);
 					if(temp->variable->byte==menu_get_index(temp)){
-						swprintf(value,sizeof(value),L"X");
+						swprintf(value,sizeof(value),L"x ");
 					}else{
 						swprintf(value,sizeof(value),L" ");
 					}
