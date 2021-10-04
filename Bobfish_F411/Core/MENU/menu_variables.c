@@ -13,7 +13,10 @@ char build_date_string[15]=__DATE__;
 wchar_t build_time_wstring[10];
 wchar_t build_date_wstring[15];
 
-allColor_t kolorDzien={.type=_ColorRGB,.rgb={.r=255,.g=0,.b=0},.hsv={.h=0,.s=0,.v=0},.temp=0};
+allColor_t kolorDzien={.type=_ColorRGB,.rgb={.r=255,.g=255,.b=255},.hsv={.h=0,.s=0,.v=255},.temp=6500};
+allColor_t kolorDzien2={.type=_ColorRGB,.rgb={.r=255,.g=255,.b=255},.hsv={.h=0,.s=0,.v=255},.temp=6500};
+allColor_t kolorNoc={.type=_ColorRGB,.rgb={.r=255,.g=255,.b=255},.hsv={.h=0,.s=0,.v=255},.temp=6500};
+allColor_t kolorNoc2={.type=_ColorRGB,.rgb={.r=255,.g=255,.b=255},.hsv={.h=0,.s=0,.v=255},.temp=6500};
 
 menu_variable_t godzina_var={ .type=_RTC_Time, .tab={16,20}};
 menu_variable_t data_var={ .type=_RTC_Date, .tab={9,4,20}};
@@ -26,6 +29,12 @@ menu_variable_t czas_wieczor={ .type=_RTC_Time, .tab={18,0}};
 menu_variable_t dzien_noc_flag={ .type=_bool, .byte=0};
 menu_variable_t eeprom_firstInit={ .type=_uint, .uint32=0xabababab};
 menu_variable_t kolorDzien_var={ .type=_color, .color=&kolorDzien};
+menu_variable_t kolorDzien2_var={ .type=_color, .color=&kolorDzien2};
+menu_variable_t kolorNoc_var={ .type=_color, .color=&kolorNoc};
+menu_variable_t kolorNoc2_var={ .type=_color, .color=&kolorNoc2};
+menu_variable_t GammaCorrectionRGB_var={ .type=_bool, .byte=0};
+menu_variable_t GammaCorrectionHSV_var={ .type=_bool, .byte=0};
+menu_variable_t GammaCorrectionTEMPERATURE_var={ .type=_bool, .byte=0};
 
 
 

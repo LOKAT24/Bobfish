@@ -94,14 +94,15 @@ void ws2812b_refresh(void) {
 
 }
 
-void ws2812b_setHSV(uint8_t ledId, int hue, int sat, int val) {
+void ws2812b_setHSV(uint8_t ledId, int hue, int sat, int val, int Gamma) {
 	/* convert hue, saturation and brightness ( HSB/HSV ) to RGB
 	 The dim_curve is used only on brightness/value and on saturation (inverted).
 	 This looks the most natural.
 	 */
-
-	val = dim_curve[val];
-	sat = 255 - dim_curve[255 - sat];
+	if(Gamma){
+		val = dim_curve[val];
+		sat = 255 - dim_curve[255 - sat];
+	}
 
 	int r;
 	int g;
@@ -156,16 +157,13 @@ void ws2812b_setHSV(uint8_t ledId, int hue, int sat, int val) {
 	}
 }
 
-void ws2812b_setRgb(uint8_t ledId, int red, int green, int blue){
+void ws2812b_setRgb(uint8_t ledId, int red, int green, int blue, int Gamma){
 	LEDS[ledId]=0;
-	LEDS[ledId]=(green<<16)+(red<<8)+blue;
-}
-void ws2812b_setRgbGamma(uint8_t ledId, int red, int green, int blue){
-	LEDS[ledId]=0;
-	LEDS[ledId]=(dim_curve[green]<<16)+(dim_curve[red]<<8)+dim_curve[blue];
+	if(Gamma) LEDS[ledId]=(dim_curve[green]<<16)+(dim_curve[red]<<8)+dim_curve[blue];
+	else LEDS[ledId]=(green<<16)+(red<<8)+blue;
 }
 
-void ws2812b_setKelvin(uint8_t ledId, int kelvin, uint8_t Gamma){
+void ws2812b_setKelvin(uint8_t ledId, int kelvin, int Gamma){
 	int kelvinId=kelvin/100;
 	kelvinId-=10; // kelvinId=0 to 1000K czyli pierwsza wartość w tabeli
 	if(kelvinId<0)kelvinId=0;
@@ -174,14 +172,7 @@ void ws2812b_setKelvin(uint8_t ledId, int kelvin, uint8_t Gamma){
 	g=(kelvin_to_RGB[kelvinId]&0x00ff00)>>8;
 	r=(kelvin_to_RGB[kelvinId]&0xff0000)>>16;
 	b=kelvin_to_RGB[kelvinId]&0x0000ff;
-	if(Gamma)ws2812b_setRgbGamma(ledId, r, g, b);
-	else ws2812b_setRgb(ledId, r, g, b);
-
-
-}
-
-void color_update(allColor_t color){
-
+	ws2812b_setRgb(ledId, r, g, b, Gamma);
 }
 
 void RgbToHsv(allColor_t *color)
@@ -218,57 +209,8 @@ void RgbToHsv(allColor_t *color)
 }
 
 
+void HsvToRgb(allColor_t *color) {
 
-void HsvToRgb(allColor_t *color)
-{
-    unsigned char region, remainder, p, q, t;
-
-    if (color->hsv.s == 0)
-    {
-    	color->rgb.r = color->hsv.v;
-    	color->rgb.g = color->hsv.v;
-    	color->rgb.b = color->hsv.v;
-        return;
-    }
-
-    region = color->hsv.h / 60;
-    remainder = (color->hsv.h - (region * 60)) * 6;
-
-    p = (color->hsv.v * (255 - color->hsv.s)) >> 8;
-    q = (color->hsv.v * (255 - ((color->hsv.s * remainder) >> 8))) >> 8;
-    t = (color->hsv.v * (255 - ((color->hsv.s * (255 - remainder)) >> 8))) >> 8;
-
-    switch (region)
-    {
-        case 0:
-        	color->rgb.r = color->hsv.v; color->rgb.g = t; color->rgb.b = p;
-            break;
-        case 1:
-        	color->rgb.r = q; color->rgb.g = color->hsv.v; color->rgb.b = p;
-            break;
-        case 2:
-        	color->rgb.r = p; color->rgb.g = color->hsv.v; color->rgb.b = t;
-            break;
-        case 3:
-        	color->rgb.r = p; color->rgb.g = q; color->rgb.b = color->hsv.v;
-            break;
-        case 4:
-        	color->rgb.r = t; color->rgb.g = p; color->rgb.b = color->hsv.v;
-            break;
-        default:
-        	color->rgb.r = color->hsv.v; color->rgb.g = p; color->rgb.b = q;
-            break;
-    }
-
-}
-void HsvToRgb2(allColor_t *color) {
-	/* convert hue, saturation and brightness ( HSB/HSV ) to RGB
-	 The dim_curve is used only on brightness/value and on saturation (inverted).
-	 This looks the most natural.
-	 */
-
-	//val = dim_curve[val];
-	//sat = 255 - dim_curve[255 - sat];
 
 	int r;
 	int g;
@@ -276,7 +218,6 @@ void HsvToRgb2(allColor_t *color) {
 	int base;
 
 	if (color->hsv.s == 0) { // Acromatic color (gray). Hue doesn't mind.
-		//LEDS[ledId] = color->hsv.v + (color->hsv.v << 8) + (color->hsv.v << 16);
 		color->rgb.r=color->hsv.v;
 		color->rgb.g=color->hsv.v;
 		color->rgb.b=color->hsv.v;
@@ -323,11 +264,27 @@ void HsvToRgb2(allColor_t *color) {
 			break;
 		}
 
-		//LEDS[ledId] = b + (r << 8) + (g << 16);
 		color->rgb.r=r;
 		color->rgb.g=g;
 		color->rgb.b=b;
 
 	}
+}
+
+void KelvinToRgb(allColor_t *color){
+	int kelvinId=color->temp/100;
+	kelvinId-=10; // kelvinId=0 to 1000K czyli pierwsza wartość w tabeli
+	if(kelvinId<0)kelvinId=0;
+	if(kelvinId>150)kelvinId=150;
+	int g,r,b;
+	g=(kelvin_to_RGB[kelvinId]&0x00ff00)>>8;
+	r=(kelvin_to_RGB[kelvinId]&0xff0000)>>16;
+	b=kelvin_to_RGB[kelvinId]&0x0000ff;
+//	color->rgb.r=dim_curve[r];
+//	color->rgb.g=dim_curve[g];
+//	color->rgb.b=dim_curve[b];
+	color->rgb.r=r;
+	color->rgb.g=g;
+	color->rgb.b=b;
 }
 

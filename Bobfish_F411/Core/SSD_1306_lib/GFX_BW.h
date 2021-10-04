@@ -76,7 +76,7 @@
 #include "fonts/fonts.h"
 
 void GFX_SetFont(const tFont* font_t);
-tFont* GFX_GetFont(void);
+const tFont* GFX_GetFont(void);
 void GFX_SetFontSize(int8_t size_t);
 int GFX_GetFontCharIndex(wchar_t c);
 uint8_t GFX_GetFontHeight(void);

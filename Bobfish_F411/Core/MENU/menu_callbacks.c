@@ -370,6 +370,10 @@ void enter_secret_menu(void){
 		case 0x01020304: //SNAKE PLAY
 			snake_play();
 			break;
+		case 0x01000000: //SNAKE PLAY
+			menu_1_2_7.child=&menu_1_X3;
+			key_enter_func();
+			break;
 		default:
 			break;
 	}
@@ -389,7 +393,7 @@ void code_menu_refresh(void){
 	GFX_DrawString(x_to_center, 0, (currentPointer->name), WHITE, WHITE);
 	GFX_DrawLine(0, GFX_GetFontHeight()*GFX_GetFontSize(), 127,  GFX_GetFontHeight()*GFX_GetFontSize(), WHITE);
 	//GFX_SetFontSize(3);
-	tFont *tempFont=GFX_GetFont();
+	const tFont *tempFont=GFX_GetFont();
 	GFX_SetFont(&Font_LED);
 	wchar_t numer[3];
 	for(int i=3;i>=0;i--){
@@ -436,7 +440,7 @@ void code_menu(void){
 
 uint8_t color_cursorH=0;
 uint8_t color_cursorH_max=0;
-uint8_t color_cursorV=0;
+uint8_t color_cursorV=3;
 const uint8_t color_cursorV_max=3;
 
 enum{NONE,RGB,HSV,TEMP};
@@ -476,7 +480,8 @@ void color_up(void){
 	case HSV:
 		switch(color_cursorH){
 		case 0:
-			temp_color->hsv.h++;
+			if(temp_color->hsv.h==359)temp_color->hsv.h=0;
+			else temp_color->hsv.h++;
 			break;
 		case 1:
 			temp_color->hsv.s++;
@@ -485,9 +490,13 @@ void color_up(void){
 			temp_color->hsv.v++;
 			break;
 		}
+		HsvToRgb(temp_color);
 		break;
 	case TEMP:
 		temp_color->temp+=100;
+		if(temp_color->temp>16000)temp_color->temp=16000;
+		KelvinToRgb(temp_color);
+		RgbToHsv(temp_color);
 		break;
 
 
@@ -518,7 +527,8 @@ void color_down(void){
 	case HSV:
 		switch(color_cursorH){
 		case 0:
-			temp_color->hsv.h--;
+			if(temp_color->hsv.h==0)temp_color->hsv.h=359;
+			else temp_color->hsv.h--;
 			break;
 		case 1:
 			temp_color->hsv.s--;
@@ -527,9 +537,13 @@ void color_down(void){
 			temp_color->hsv.v--;
 			break;
 		}
+		HsvToRgb(temp_color);
 		break;
 	case TEMP:
 		temp_color->temp-=100;
+		if(temp_color->temp<1000)temp_color->temp=1000;
+		KelvinToRgb(temp_color);
+		RgbToHsv(temp_color);
 		break;
 	}
 }
@@ -577,12 +591,62 @@ void color_right(void){
 	else color_cursorH++;
 }
 void color_refresh(void){
- //TODO
+	allColor_t *temp_color=currentPointer->variable->color;
+	SSD1306_Clear(0);
+	GFX_DrawFillRoundRectangle(1, 1, 125, 61, 8, BLACK);
+	GFX_DrawRoundRectangle(1, 1, 125, 61, 8, WHITE);
+	wchar_t str[20];
+	swprintf(str,sizeof(str),L"%ls",currentPointer->name);
+	uint8_t x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str)/2;
+	GFX_DrawString(x_pos, 0, str, WHITE, BLACK);
+
+	const tFont *tempFont=GFX_GetFont();
+	GFX_SetFont(&Font_8x5);
+	for(int i=0;i<4;i++){
+		wchar_t str2[30];
+		uint8_t y_pos=18+(10*i);
+		switch(i){
+		case 0:
+			swprintf(str2,sizeof(str2),L"RGB: R:%03d G:%03d B:%03d",temp_color->rgb.r,temp_color->rgb.g,temp_color->rgb.b);
+			break;
+		case 1:
+			swprintf(str2,sizeof(str2),L"HSV: H:%03d S:%03d V:%03d",temp_color->hsv.h,temp_color->hsv.s,temp_color->hsv.v);
+			break;
+		case 2:
+			swprintf(str2,sizeof(str2),L"TEMPERATURE: %d K",temp_color->temp);
+			break;
+		case 3:
+			swprintf(str2,sizeof(str2),L"--- S A V E ---");
+			break;
+		}
+
+		x_pos=SSD1306_LCDWIDTH/2-GFX_GetStringWidth(str2)/2;
+		GFX_DrawString(x_pos, y_pos, str2, WHITE, BLACK);
+
+
+		if(i==color_cursorV){			//kursor vertical
+			GFX_DrawString(x_pos-6, y_pos, L">", WHITE, BLACK);
+
+			if(color_change_mode==RGB||color_change_mode==HSV){
+				GFX_DrawFillRectangle(x_pos+25+(color_cursorH*30)-1, y_pos-1, 27, 10, INVERSE);
+			}
+			if(color_change_mode==TEMP){
+				GFX_DrawFillRectangle(x_pos+65-1, y_pos-1, (temp_color->temp>=10000)?37:32, 10, INVERSE);
+			}
+		}
+
+		if(i!=3){			//checkbox do wyboru aktualnego trybu wyświetlania
+			GFX_DrawFillCircle(123, y_pos+3, 4, BLACK);
+			GFX_DrawCircle(123, y_pos+3, 4, WHITE);
+			if(temp_color->type==i)GFX_DrawFillCircle(123, y_pos+3, 2, WHITE);
+		}
+	}
+	GFX_SetFont(tempFont);
 }
 
 void color_change(void){
 	color_cursorH=0;
-	color_cursorV=0;
+	color_cursorV=3;
 
 	temp_key_down_func=key_down_func;
 	temp_key_up_func=key_up_func;

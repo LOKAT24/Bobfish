@@ -83,6 +83,11 @@ menu_t menu_0;//ekran startowy
 
 		menu_t menu_1_X1;//Oscyloskop
 		menu_t menu_1_X2;//Snake
+
+		menu_t menu_1_X3;//Korekcja gamma
+				menu_t menu_1_X3_1;//Korekcja gamma RGB
+				menu_t menu_1_X3_2;//Korekcja gamma HSV
+				menu_t menu_1_X3_3;//Korekcja gamma TEMP
 	menu_t menu_2;//menu boczne
 
 

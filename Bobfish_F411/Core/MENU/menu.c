@@ -27,9 +27,9 @@ menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran star
 			menu_t menu_1_2_7 = { L"Menu serwis", NULL, &menu_1_2_6, NULL, &menu_1_2, code_menu, NULL}; //Save(time/date)
 		menu_t menu_1_3 = { L"Wybór koloru", &menu_1_4, &menu_1_2, &menu_1_3_1, &menu_1, NULL, NULL}; //Kreator efektu
 			menu_t menu_1_3_1 = { L"Kolor Dzień", &menu_1_3_2, &menu_1_3_4, NULL, &menu_1_3, color_change, &kolorDzien_var}; //Numer efektu
-			menu_t menu_1_3_2 = { L"Kolor Dzień_2", &menu_1_3_3, &menu_1_3_1, NULL, &menu_1_3, value_change, NULL}; //Kolor 1
-			menu_t menu_1_3_3 = { L"Kolor Noc", &menu_1_3_4, &menu_1_3_2, NULL, &menu_1_3, value_change, NULL}; //Kolor 2
-			menu_t menu_1_3_4 = { L"Kolor Noc_2", NULL, &menu_1_3_3, NULL, &menu_1_3, value_change, NULL}; //Szybkość efektu
+			menu_t menu_1_3_2 = { L"Kolor Dzień_2", &menu_1_3_3, &menu_1_3_1, NULL, &menu_1_3, color_change, &kolorDzien2_var}; //Kolor 1
+			menu_t menu_1_3_3 = { L"Kolor Noc", &menu_1_3_4, &menu_1_3_2, NULL, &menu_1_3, color_change, &kolorNoc_var}; //Kolor 2
+			menu_t menu_1_3_4 = { L"Kolor Noc_2", NULL, &menu_1_3_3, NULL, &menu_1_3, color_change, &kolorNoc2_var}; //Szybkość efektu
 		menu_t menu_1_4 = { L"Dzień/Noc", NULL, &menu_1_3, &menu_1_4_1, &menu_1, NULL, NULL};
 			menu_t menu_1_4_1 = { L"Praca", &menu_1_4_2, &menu_1_4_3, NULL, &menu_1_4, value_change, &dzien_noc_flag};
 			menu_t menu_1_4_2 = { L"Rano", &menu_1_4_3, &menu_1_4_1, NULL, &menu_1_4, value_change, &czas_rano};
@@ -39,6 +39,10 @@ menu_t menu_0 = { L"Start", NULL, NULL, &menu_1, NULL, NULL, NULL}; //ekran star
 
 	menu_t menu_1_X1 = { L"~Oscyloskop~", NULL, NULL, NULL, &menu_1, NULL, NULL}; //Oscyloskop
 	menu_t menu_1_X2 = { L"Play \"SNAKE II\"", NULL, NULL, NULL, &menu_1, snake_play, NULL}; //Snake
+	menu_t menu_1_X3 = { L"Korekc. Gamma", NULL, NULL, &menu_1_X3_1, &menu_1_2_7, NULL, NULL}; //Korekcja gamma
+		menu_t menu_1_X3_1 = { L"Gam.RGB", &menu_1_X3_2, &menu_1_X3_3, NULL,  &menu_1_X3, value_change, &GammaCorrectionRGB_var}; //Korekcja gamma RGB
+		menu_t menu_1_X3_2 = { L"Gam.HSV", &menu_1_X3_3, &menu_1_X3_1, NULL,  &menu_1_X3, value_change, &GammaCorrectionHSV_var}; //Korekcja gamma HSV
+		menu_t menu_1_X3_3 = { L"Gam.TEMP", NULL, &menu_1_X3_2, NULL,  &menu_1_X3, value_change, &GammaCorrectionTEMPERATURE_var}; //Korekcja gamma TEMP
 
 menu_t *currentPointer = &menu_1;
 
@@ -112,6 +116,8 @@ void menu_refresh(void) {
 						swprintf(value,sizeof(value),L" ");
 					}
 					break;
+				default:
+					swprintf(value,sizeof(value),L" ");
 				}
 				uint8_t x_pos=127-GFX_GetStringWidth(value)*GFX_GetFontSize();
 				GFX_DrawString(x_pos, y_draw, value, WHITE, WHITE);
@@ -149,7 +155,7 @@ void menu_refresh(void) {
 		//GFX_DrawString(0, 0, L"PULPIT", WHITE, WHITE);
 		//pulpit
 
-		tFont* tempFont=GFX_GetFont();
+		const tFont* tempFont=GFX_GetFont();
 		uint8_t tempFontSize=GFX_GetFontSize();
 		GFX_SetFont(&Font_Times_New_Roman);
 		wchar_t godz_str[10];
@@ -252,6 +258,11 @@ void menu_prev(void) {
 
 void menu_enter(void) {
 
+	//////////////////OBSLUGA MENU SERWIS//////////////////////
+	if(currentPointer==&menu_1_2_7&&currentPointer->child!=NULL);
+	else
+	//////////////////OBSLUGA MENU SERWIS//////////////////////
+
 	if (currentPointer->menu_function) currentPointer->menu_function();
 
 	if (currentPointer->child)
@@ -266,9 +277,12 @@ void menu_enter(void) {
 
 		menu_refresh();
 	}
+
 }
 
 void menu_back(void) {
+
+
 
 	if (currentPointer->parent) {
 
@@ -279,6 +293,10 @@ void menu_back(void) {
 
 		menu_refresh();
 	}
+
+	//////////////////OBSLUGA MENU SERWIS//////////////////////
+	if(currentPointer==&menu_1_2_7)currentPointer->child=NULL;
+	//////////////////OBSLUGA MENU SERWIS//////////////////////
 }
 
 void menu_init(I2C_HandleTypeDef *i2c) {

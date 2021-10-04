@@ -16,15 +16,15 @@
 //
 #define _FONT_Times_New_Roman_ 1
 #define _FontMini_ 0
-#define _Font_8x5_ 0
+#define _Font_8x5_ 1
 #define _Font_Tahoma_ 0
 #define _Font_LED_ 1
 #define _Font_small_ 1
 #define _Font_kuchen_ 0
-#define _Font_Harry_Potter_h48_ 1
-#define _Font_Big_1_ 1
+#define _Font_Harry_Potter_h48_ 0
+#define _Font_Big_1_ 0
 #define _Font_3D_ 0
-#define _Font_Gothic_7x13_ 0
+#define _Font_Gothic_7x13_ 1
 
 
 

@@ -18,14 +18,14 @@
 
 uint32_t LEDS[NUMBER_OF_LEDS];
 
-void ws2812b_setHSV(uint8_t ledId, int hue, int sat, int val);
-void ws2812b_setRgb(uint8_t ledId, int red, int green, int blue);
-void ws2812b_setRgbGamma(uint8_t ledId, int red, int green, int blue);
+void ws2812b_setHSV(uint8_t ledId, int hue, int sat, int val, int Gamma);
+void ws2812b_setRgb(uint8_t ledId, int red, int green, int blue, int Gamma);
 void ws2812b_init(TIM_HandleTypeDef *htim, uint32_t Channel);
-void ws2812b_setKelvin(uint8_t ledId, int kelvin, uint8_t Gamma);
+void ws2812b_setKelvin(uint8_t ledId, int kelvin, int Gamma);
 void ws2812b_refresh(void);
 
 void RgbToHsv(allColor_t *color);
 void HsvToRgb(allColor_t *color);
+void KelvinToRgb(allColor_t *color);
 
 #endif /* WS2812B_H_ */

@@ -201,10 +201,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	ws2812b_setHSV(0, 0, 255, 255);
-	ws2812b_refresh();
+	  allColor_t *temp_color=kolorDzien_var.color;
+	switch(temp_color->type){
+	case _ColorRGB:
+		for(uint8_t i=0;i<NUMBER_OF_LEDS;i++)
+		ws2812b_setRgb(i, temp_color->rgb.r, temp_color->rgb.g, temp_color->rgb.b, GammaCorrectionRGB_var.byte);
+		break;
+	case _ColorHSV:
+		for(uint8_t i=0;i<NUMBER_OF_LEDS;i++)
+		ws2812b_setHSV(i, temp_color->hsv.h, temp_color->hsv.s, temp_color->hsv.v, GammaCorrectionHSV_var.byte);
+		break;
+	case _ColorTemp:
+		for(uint8_t i=0;i<NUMBER_OF_LEDS;i++)
+		ws2812b_setKelvin(i, temp_color->temp, GammaCorrectionTEMPERATURE_var.byte);
+		break;
+	}
 
-	//HsvToRgb(&kolorDzien);
+	ws2812b_refresh();
 
 
 	if(IsKey(ANYKEY)&&buzzer_state.byte){

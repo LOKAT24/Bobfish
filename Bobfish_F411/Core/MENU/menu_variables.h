@@ -32,7 +32,7 @@ typedef struct allColor_t {
 } allColor_t;
 #include "public_include.h"
 
-enum { _bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _string, _select, _color};
+enum { _bool, _byte, _float, _int, _uint, _RTC_Time, _RTC_Date, _string, _select, _color, _tab};
 
 typedef struct{
 	uint8_t type;
@@ -60,7 +60,12 @@ extern menu_variable_t czas_rano;
 extern menu_variable_t czas_wieczor;
 extern menu_variable_t dzien_noc_flag;
 extern menu_variable_t kolorDzien_var;
-
+extern menu_variable_t kolorDzien2_var;
+extern menu_variable_t kolorNoc_var;
+extern menu_variable_t kolorNoc2_var;
+extern menu_variable_t GammaCorrectionRGB_var;
+extern menu_variable_t GammaCorrectionHSV_var;
+extern menu_variable_t GammaCorrectionTEMPERATURE_var;
 
 
 void menu_variables_init(void);

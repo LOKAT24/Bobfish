@@ -38,7 +38,7 @@ void GFX_SetFont(const tFont* font_t)
 	font = font_t;
 }
 
-tFont* GFX_GetFont(void)
+const tFont* GFX_GetFont(void)
 {
 	return font;
 }
